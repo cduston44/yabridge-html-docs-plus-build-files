@@ -1,0 +1,89 @@
+<!-- ?xml version='1.0' encoding='UTF-8'? -->
+<link href="./files/github-css.css" rel="stylesheet"/>
+<meta charset="utf-8" content="text/html"/>
+<div class="gist">
+<style class="formula-style">
+        svg.gh-md-to-html-formula {
+            fill: black;
+        }
+    </style>
+<div class="gist-file"> <!-- This is the class that is responsible for the boxing! -->
+<div class="gist-data">
+<div class="js-gist-file-update-container js-task-list-container file-box">
+<div class="file" id="user-content-article-README">
+<div class="Box-body readme blob js-code-block-container p-5 p-xl-6" id="user-content-file-docker-image-pull-md-readme" style="margin-left: 40px; margin-right: 40px; margin-top: 20px; margin-bottom: 20px">
+<article class="markdown-body entry-content container-lg" itemprop="text">
+<h1 id="user-content-yabridgectl">
+<a aria-hidden="true" class="anchor" href="#user-content-yabridgectl" id="user-content-yabridgectl" name="user-content-yabridgectl"><span aria-hidden="true" class="octicon octicon-link"></span></a>yabridgectl</h1>
+<p>A small, optional utility to help set up and update
+<a href="https://github.com/robbert-vdh/yabridge">yabridge</a> for several directories at
+once.</p>
+<h2 id="user-content-usage">
+<a aria-hidden="true" class="anchor" href="#user-content-usage" id="user-content-usage" name="user-content-usage"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h2>
+<p>Yabridgectl can be downloaded from the <a href="https://github.com/robbert-vdh/yabridge/releases">releases
+page</a> on GitHub and can run
+from anywhere. All of the information below can also be found through
+<code>yabridgectl --help</code>.</p>
+<p>Keep in mind that during normal usage you should not need to do anything other
+than the things listed in yabridge's <a href="https://github.com/robbert-vdh/yabridge#usage">main
+readme</a>. All of the other options
+mentioned here are only useful during development.</p>
+<h3 id="user-content-yabridge-path">
+<a aria-hidden="true" class="anchor" href="#user-content-yabridge-path" id="user-content-yabridge-path" name="user-content-yabridge-path"><span aria-hidden="true" class="octicon octicon-link"></span></a>Yabridge path</h3>
+<p>Yabridgectl will need to know where it can find <code>libyabridge-vst2.so</code> and
+<code>libyabridge-vst3.so</code>. By default it will search for it in both
+<code>~/.local/share/yabridge</code> (the recommended installation directory when using the
+prebuilt binaries), in <code>/usr/lib</code> and in <code>/usr/local/lib</code>. You can use the
+command below to override this behaviour and to use a custom installation
+directory instead.</p>
+<div class="highlight highlight-source-shell"><pre>yabridgectl <span class="pl-c1">set</span> --path=<span class="pl-k">&lt;</span>path/to/directory/containing/yabridge/files<span class="pl-k">&gt;</span></pre></div>
+<h3 id="user-content-managing-directories">
+<a aria-hidden="true" class="anchor" href="#user-content-managing-directories" id="user-content-managing-directories" name="user-content-managing-directories"><span aria-hidden="true" class="octicon octicon-link"></span></a>Managing directories</h3>
+<p>Yabridgectl can manage multiple Windows plugin install locations for you.
+Whenever you run <code>yabridgectl sync</code> it will search these directories for VST2
+plugins and VST3 modules. To add, remove and list directories, you can use the
+commands below. The status command will show you yabridgectl's current settings
+and the installation status for all of your plugins.</p>
+<div class="highlight highlight-source-shell"><pre><span class="pl-c"><span class="pl-c">#</span> Add a directory containing plugins</span>
+<span class="pl-c"><span class="pl-c">#</span> Use the command from the next line to add the most common VST2 plugin directory:</span>
+<span class="pl-c"><span class="pl-c">#</span> yabridgectl add "$HOME/.wine/drive_c/Program Files/Steinberg/VstPlugins"</span>
+<span class="pl-c"><span class="pl-c">#</span> VST3 plugins are located here:</span>
+<span class="pl-c"><span class="pl-c">#</span> yabridgectl add "$HOME/.wine/drive_c/Program Files/Common Files/VST3"</span>
+yabridgectl add <span class="pl-k">&lt;</span>path/to/plugins<span class="pl-k">&gt;</span>
+<span class="pl-c"><span class="pl-c">#</span> Remove a plugin location, this will ask you if you want to remove any leftover files from yabridge</span>
+yabridgectl rm <span class="pl-k">&lt;</span>path/to/plugins<span class="pl-k">&gt;</span>
+<span class="pl-c"><span class="pl-c">#</span> List the current plugin locations</span>
+yabridgectl list
+<span class="pl-c"><span class="pl-c">#</span> Show the current settings and the installation status for all of your plugins</span>
+yabridgectl status
+<span class="pl-c"><span class="pl-c">#</span> Show the options for managing yabridge's indexing blacklist. It's highly</span>
+<span class="pl-c"><span class="pl-c">#</span> unlikely that you'll ever need to use this.</span>
+yabridgectl blacklist</pre></div>
+<h3 id="user-content-installing-and-updating">
+<a aria-hidden="true" class="anchor" href="#user-content-installing-and-updating" id="user-content-installing-and-updating" name="user-content-installing-and-updating"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installing and updating</h3>
+<p>Lastly you can tell yabridgectl to set up or update yabridge for all of your
+VST2 and VST3 plugins at the same time using the commands below. Yabridgectl
+will warn you if it finds unrelated <code>.so</code> files that may have been left after
+uninstalling a plugin, or if it finds any unknown VST3 plugins in
+<code>~/.vst3/yabridge</code>. You can rerun the sync command with the <code>--prune</code> option to
+delete those files. If you are using the default copy-based installation method,
+it will also verify that your search <code>PATH</code> has been set up correctly so you can
+get up and running faster.</p>
+<div class="highlight highlight-source-shell"><pre><span class="pl-c"><span class="pl-c">#</span> Set up or update yabridge for all plugins found under the plugin locations</span>
+yabridgectl sync
+<span class="pl-c"><span class="pl-c">#</span> Set up or update yabridge, and also remove any leftover .so files</span>
+yabridgectl sync --prune
+<span class="pl-c"><span class="pl-c">#</span> Set up yabridge or update for all plugins, even if it would not be necessary</span>
+yabridgectl sync --force</pre></div>
+<h2 id="user-content-building-from-source">
+<a aria-hidden="true" class="anchor" href="#user-content-building-from-source" id="user-content-building-from-source" name="user-content-building-from-source"><span aria-hidden="true" class="octicon octicon-link"></span></a>Building from source</h2>
+<p>After installing <a href="https://rustup.rs/" rel="nofollow">Rust</a>, simply run the command below to
+compile and run:</p>
+<div class="highlight highlight-source-shell"><pre>cargo run --release</pre></div>
+</article>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
