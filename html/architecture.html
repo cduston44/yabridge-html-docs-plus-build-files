@@ -13,8 +13,7 @@
 <div class="file" id="user-content-article-architecture">
 <div class="Box-body readme blob js-code-block-container p-5 p-xl-6" id="user-content-file-docker-image-pull-md-readme" style="margin-left: 40px; margin-right: 40px; margin-top: 20px; margin-bottom: 20px">
 <article class="markdown-body entry-content container-lg" itemprop="text">
-<h1 id="user-content-architecture">
-<a aria-hidden="true" class="anchor" href="#user-content-architecture" id="user-content-architecture" name="user-content-architecture"><span aria-hidden="true" class="octicon octicon-link"></span></a>Architecture</h1>
+<h1 id="user-content-architecture"><a aria-hidden="true" class="anchor" href="#user-content-architecture" id="user-content-architecture" name="user-content-architecture"><span aria-hidden="true" class="octicon octicon-link"></span></a>Architecture</h1>
 <ul>
 <li>
 <a href="#user-content-general-architecture">General architecture</a>
@@ -25,18 +24,15 @@
 </li>
 <li><a href="#user-content-vst2-plugins">VST2 plugins</a></li>
 <li><a href="#user-content-vst3-plugins">VST3 plugins</a></li>
+<li><a href="#user-content-clap-plugins">CLAP plugins</a></li>
 <li><a href="#user-content-audio-buffers">Audio buffers</a></li>
 </ul>
-<h2 id="user-content-general-architecture">
-<a aria-hidden="true" class="anchor" href="#user-content-general-architecture" id="user-content-general-architecture" name="user-content-general-architecture"><span aria-hidden="true" class="octicon octicon-link"></span></a>General architecture</h2>
+<h2 id="user-content-general-architecture"><a aria-hidden="true" class="anchor" href="#user-content-general-architecture" id="user-content-general-architecture" name="user-content-general-architecture"><span aria-hidden="true" class="octicon octicon-link"></span></a>General architecture</h2>
 <p>The project consists of multiple components: a number of native Linux plugin
-libraries (<code>libyabridge-vst2.so</code> for VST2 plugins, and <code>libyabridge-vst3.so</code> for
-VST3 plugins), matching chainloader libraries (<code>libyabridge-chainloader-vst2.so</code>
-for VST2 plugins, and <code>libyabridge-chainloader-vst3.so</code> for VST3 plugins) that
-act as stubs to load the former libraries, and a few different plugin host
-applications that can run under Wine
-(<code>yabridge-host.exe</code>/<code>yabridge-host.exe.so</code>, and
-<code>yabridge-host-32.exe</code>/<code>yabridge-host-32.exe.so</code> if the bitbridge is enabled).</p>
+libraries for different plugin formats, matching chainloader libraries that act
+as stubs to load the former libraries, and one or two plugin host applications
+that can run under Wine depending on whether or not the bitbridging
+functionality has been enabled.</p>
 <p>The main idea is that when the host loads a (chainloader) plugin, the plugin
 will try to locate the corresponding Windows plugin, and it will then start a
 Wine process to host that Windows plugin. Depending on the architecture of the
@@ -56,8 +52,7 @@ multiple plugins can all share the same yabridge plugin bridge library instance,
 since the same library will be <code>dlopen()</code>'d into a single process multiple
 times. This can help increase the L1i cache hit rate when using multiple
 yabridge plugins.</p>
-<h3 id="user-content-communication">
-<a aria-hidden="true" class="anchor" href="#user-content-communication" id="user-content-communication" name="user-content-communication"><span aria-hidden="true" class="octicon octicon-link"></span></a>Communication</h3>
+<h3 id="user-content-communication"><a aria-hidden="true" class="anchor" href="#user-content-communication" id="user-content-communication" name="user-content-communication"><span aria-hidden="true" class="octicon octicon-link"></span></a>Communication</h3>
 <p>Once the Wine plugin host has started or the group host process has accepted the
 request to host the plugin, communication between the native plugin and the
 Windows plugin host will be set up using a series of Unix domain sockets. How
@@ -106,9 +101,9 @@ that the calling thread can handle other tasks through another IO context. See
 <code>Vst3HostBridge::send_mutually_recursive_message()</code> and
 <code>Vst3Bridge::send_mutually_recursive_message()</code> for the actual implementation
 with more details. This applies to the functions related to resizing VST3
-editors on both the Linux and the Wine sides.</p>
-<h3 id="user-content-editor-embedding">
-<a aria-hidden="true" class="anchor" href="#user-content-editor-embedding" id="user-content-editor-embedding" name="user-content-editor-embedding"><span aria-hidden="true" class="octicon octicon-link"></span></a>Editor embedding</h3>
+editors on both the Linux and the Wine sides. Similar implementations are used
+for VST2 and CLAP plugins where needed.</p>
+<h3 id="user-content-editor-embedding"><a aria-hidden="true" class="anchor" href="#user-content-editor-embedding" id="user-content-editor-embedding" name="user-content-editor-embedding"><span aria-hidden="true" class="octicon octicon-link"></span></a>Editor embedding</h3>
 <p>Everything related to editor embedding happens in <code>src/wine-host/editor.h</code>. To
 embed the Windows plugin's editor in the X11 window provided by the host we'll
 create a Wine window and an X11 wrapper window, embed that Wine window into the
@@ -157,8 +152,7 @@ on the fact that Wine's OLE drag-and-drop implementation uses a tracker window
 that stores the <code>IDataSource</code> used for the drop. That means that we can just
 listen for that tracker window being created, read the data the plugin is trying
 to drag-and-drop, and then set up XDND with that same data.</p>
-<h2 id="user-content-vst2-plugins">
-<a aria-hidden="true" class="anchor" href="#user-content-vst2-plugins" id="user-content-vst2-plugins" name="user-content-vst2-plugins"><span aria-hidden="true" class="octicon octicon-link"></span></a>VST2 plugins</h2>
+<h2 id="user-content-vst2-plugins"><a aria-hidden="true" class="anchor" href="#user-content-vst2-plugins" id="user-content-vst2-plugins" name="user-content-vst2-plugins"><span aria-hidden="true" class="octicon octicon-link"></span></a>VST2 plugins</h2>
 <p>When a VST2 plugin gets initialized using the process described above, we'll
 send the VST2 plugin's <code>AEffect</code> object from the Wine plugin host to the native
 plugin over a control socket. We'll also send the plugin's configuration
@@ -190,8 +184,7 @@ we'll also check whether the plugin supports <code>processReplacing()</code>, an
 for some reason does not then we'll simply call <code>process()</code> with zeroed out
 buffers.</li>
 </ul>
-<h2 id="user-content-vst3-plugins">
-<a aria-hidden="true" class="anchor" href="#user-content-vst3-plugins" id="user-content-vst3-plugins" name="user-content-vst3-plugins"><span aria-hidden="true" class="octicon octicon-link"></span></a>VST3 plugins</h2>
+<h2 id="user-content-vst3-plugins"><a aria-hidden="true" class="anchor" href="#user-content-vst3-plugins" id="user-content-vst3-plugins" name="user-content-vst3-plugins"><span aria-hidden="true" class="octicon octicon-link"></span></a>VST3 plugins</h2>
 <p>VST3 plugins are architecturally very different from VST2 plugins. A VST3 plugin
 is a module, that when loaded by the host exposes a plugin factory that can be
 used to create various classes known to that factory. Normally this factory
@@ -257,8 +250,15 @@ itself up. Because of binary compatibility reasons destructors in the VST3 SDK
 are non-virtual, but we can safely make them virtual in our case.
 <code>Vst3*ProxyImpl</code> then provides an implementation for all of the applicable
 <code>IFoo</code> interfaces that perform function calls using those message structs.</p>
-<h2 id="user-content-audio-buffers">
-<a aria-hidden="true" class="anchor" href="#user-content-audio-buffers" id="user-content-audio-buffers" name="user-content-audio-buffers"><span aria-hidden="true" class="octicon octicon-link"></span></a>Audio buffers</h2>
+<h2 id="user-content-clap-plugins"><a aria-hidden="true" class="anchor" href="#user-content-clap-plugins" id="user-content-clap-plugins" name="user-content-clap-plugins"><span aria-hidden="true" class="octicon octicon-link"></span></a>CLAP plugins</h2>
+<p>Fundamentally the CLAP bridging is very similar to the VST3 bridging with some
+minor style and consistency improvements. Yabridge creates plugin and host proxy
+objects that expose the same extensions as the plugin and host objects they are
+proxying. The main difference compared to the VST3 approach is that thread
+requirements are more strictly upheld since CLAP documents thread requirements
+for every function calls, and that each plugin instance now has an audio thread
+callback socket for the handful of interfaces that use those.</p>
+<h2 id="user-content-audio-buffers"><a aria-hidden="true" class="anchor" href="#user-content-audio-buffers" id="user-content-audio-buffers" name="user-content-audio-buffers"><span aria-hidden="true" class="octicon octicon-link"></span></a>Audio buffers</h2>
 <p>Starting from yabridge 3.4.0, audio processing is now handled using a hybrid of
 both shared memory and the socket-based message passing mechanism. Yabridge uses
 sockets instead of shared memory everywhere else because of the added
@@ -271,7 +271,7 @@ buffers in a big block of shared memory and use the sockets for all other data
 that gets sent along with the actual audio buffers. This also means that the
 sockets act as a form of synchronisation, so we do not need any additional
 inter-process locking. These shared memory audio buffers are defined as part of
-<code>AudioShmBuffer</code>, and they are configured while handling <code>effMainsChanged</code> for
+<code>AudioShmBuffer</code>, and they are configured during <code>effMainsChanged</code> for
 VST2 plugins and during <code>IAudioProcessor::setActive()</code> for VST3 plugins.
 For VST2 plugins this does mean that we will need to keep track of the maximum
 block size and the sample size reported by the host, since this information is

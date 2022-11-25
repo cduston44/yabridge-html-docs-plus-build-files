@@ -13,13 +13,11 @@
 <div class="file" id="user-content-article-ROADMAP">
 <div class="Box-body readme blob js-code-block-container p-5 p-xl-6" id="user-content-file-docker-image-pull-md-readme" style="margin-left: 40px; margin-right: 40px; margin-top: 20px; margin-bottom: 20px">
 <article class="markdown-body entry-content container-lg" itemprop="text">
-<h1 id="user-content-roadmap">
-<a aria-hidden="true" class="anchor" href="#user-content-roadmap" id="user-content-roadmap" name="user-content-roadmap"><span aria-hidden="true" class="octicon octicon-link"></span></a>Roadmap</h1>
+<h1 id="user-content-roadmap"><a aria-hidden="true" class="anchor" href="#user-content-roadmap" id="user-content-roadmap" name="user-content-roadmap"><span aria-hidden="true" class="octicon octicon-link"></span></a>Roadmap</h1>
 <p>Yabridge's VST2 and VST3 bridging are feature complete and should work great,
 but there are still some other features that may be worth implementing. This
 page lists some of those.</p>
-<h1 id="user-content-short-ish-term">
-<a aria-hidden="true" class="anchor" href="#user-content-short-ish-term" id="user-content-short-ish-term" name="user-content-short-ish-term"><span aria-hidden="true" class="octicon octicon-link"></span></a>Short-ish term</h1>
+<h1 id="user-content-short-ish-term"><a aria-hidden="true" class="anchor" href="#user-content-short-ish-term" id="user-content-short-ish-term" name="user-content-short-ish-term"><span aria-hidden="true" class="octicon octicon-link"></span></a>Short-ish term</h1>
 <ul>
 <li>
 <a href="https://www.celemony.com/en/service1/about-celemony/technologies" rel="nofollow">ARA</a>
@@ -27,28 +25,15 @@ support for VST3 plugins. The ARA SDK has recently been <a href="https://github.
 source</a>, so we can now finally start
 working on this.</li>
 </ul>
-<h1 id="user-content-longer-term">
-<a aria-hidden="true" class="anchor" href="#user-content-longer-term" id="user-content-longer-term" name="user-content-longer-term"><span aria-hidden="true" class="octicon octicon-link"></span></a>Longer term</h1>
+<h1 id="user-content-longer-term"><a aria-hidden="true" class="anchor" href="#user-content-longer-term" id="user-content-longer-term" name="user-content-longer-term"><span aria-hidden="true" class="octicon octicon-link"></span></a>Longer term</h1>
 <ul>
-<li>
-<a href="https://github.com/free-audio/clap">CLAP</a> plugin bridging. Implementing this
-only makes sense once Windows-only CLAP plugins start appearing.</li>
 <li>An easier <a href="https://github.com/robbert-vdh/yabridge/issues/51">updater</a> through
 a new <code>yabridgectl update</code> command for distros that don't package yabridge.</li>
 </ul>
-<h1 id="user-content-for-a-major-release">
-<a aria-hidden="true" class="anchor" href="#user-content-for-a-major-release" id="user-content-for-a-major-release" name="user-content-for-a-major-release"><span aria-hidden="true" class="octicon octicon-link"></span></a>For a major release</h1>
+<h1 id="user-content-somewhere-in-the-future-possibly"><a aria-hidden="true" class="anchor" href="#user-content-somewhere-in-the-future-possibly" id="user-content-somewhere-in-the-future-possibly" name="user-content-somewhere-in-the-future-possibly"><span aria-hidden="true" class="octicon octicon-link"></span></a>Somewhere in the future, possibly</h1>
 <ul>
-<li>Replace the use of <code>notify-send</code> for notifications with using <code>libdbus</code>
-directly. Most systems will have both available by default, but some less
-common distros split <code>notify-send</code> from the rest of the <code>libnotify</code> package.</li>
-<li>Consider adding an option for yabridgectl to set up VST2 plugins in <code>~/.vst</code>.
-As discussed in a couple places already doing so would come with a number of
-downsides and potential pitfalls so this may not happen.</li>
-</ul>
-<h1 id="user-content-somewhere-in-the-future-possibly">
-<a aria-hidden="true" class="anchor" href="#user-content-somewhere-in-the-future-possibly" id="user-content-somewhere-in-the-future-possibly" name="user-content-somewhere-in-the-future-possibly"><span aria-hidden="true" class="octicon octicon-link"></span></a>Somewhere in the future, possibly</h1>
-<ul>
+<li>CLAP audio thread pool support. Implementing this efficiently is less than
+trivial, and there are currently no plugins that can benefit from it.</li>
 <li>REAPER's vendor specific <a href="https://www.reaper.fm/sdk/vst/vst_ext.php" rel="nofollow">VST2.4</a>
 and
 <a href="https://github.com/justinfrankel/reaper-sdk/blob/main/sdk/reaper_vst3_interfaces.h">VST3</a>

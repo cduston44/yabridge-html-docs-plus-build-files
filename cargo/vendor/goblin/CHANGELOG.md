@@ -5,6 +5,30 @@ Before 1.0, this project does not adhere to [Semantic Versioning](http://semver.
 
 Goblin is now 0.5, which means we will try our best to ease breaking changes. Tracking issue is here: https://github.com/m4b/goblin/issues/97
 
+## [0.6.0] - 2022-10-23
+### Breaking
+macho: add support for archives in multi-arch binaries, big thanks to @nick96: https://github.com/m4b/goblin/pull/322
+### Changed
+elf: only consider loadable segments for VM translation (this may semantically break someone, if they depended on older behavior), thanks @lumag: https://github.com/m4b/goblin/pull/329
+### Fixed
+archive: fix potential panic in bsd filenames, thanks @nathaniel-daniel:  https://github.com/m4b/goblin/pull/335
+archive: fix subtract with overflow, thanks @anfedotoff: https://github.com/m4b/goblin/pull/333
+pe: fix oob access, thanks @anfedetoff: https://github.com/m4b/goblin/pull/330
+archive: fix oob access, thanks @anfedetoff: https://github.com/m4b/goblin/pull/329
+### Added
+pe: add machine_to_str utility function, thanks @cgzones: https://github.com/m4b/goblin/pull/338
+fuzz: add debug info for line numbers, thanks @SweetVishnya: https://github.com/m4b/goblin/pull/336
+
+## [0.5.4] - 2022-8-14
+### Fixed
+pe: fix regression in PE binary parsing, thanks @SquareMan: https://github.com/m4b/goblin/pull/321
+
+## [0.5.3] - 2022-7-16
+### Fixed
+elf: fix elf strtab parsing, thanks @tux3: https://github.com/m4b/goblin/pull/316
+### Added
+elf: implement plain for note headers, thanks @mkroening: https://github.com/m4b/goblin/pull/317
+
 ## [0.5.2] - 2022-6-5
 ### Fixed
 elf: fix arithmetic overflows in `file_range()` and `vm_range()`, thanks @alessandron: https://github.com/m4b/goblin/pull/306
