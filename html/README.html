@@ -68,9 +68,13 @@ while also staying easy to debug and maintain.</p>
 </li>
 </ul>
 <h2 id="user-content-tested-with"><a aria-hidden="true" class="anchor" href="#user-content-tested-with" id="user-content-tested-with" name="user-content-tested-with"><span aria-hidden="true" class="octicon octicon-link"></span></a>Tested with</h2>
-<p>Yabridge has been tested under the following hosts using Wine Staging 7.21
-(versions before yabridge 5.0.1 won't work with Wine 7.21 because of Wine bug
-<a href="https://bugs.winehq.org/show_bug.cgi?id=53912" rel="nofollow">#53912</a>):</p>
+<p>Yabridge has been tested under the following hosts using Wine Staging <strong>7.20</strong>.
+Wine 7.21 and 7.22 contain a major regression
+<a href="https://bugs.winehq.org/show_bug.cgi?id=53912" rel="nofollow">#53912</a> that break yabridge. The
+current yabridge 5.0.2 build up on GitHub contains several workarounds to still
+be able to use the latest version of Wine with yabridge. But if you're getting
+crashes or freezes, do consider <a href="#user-content-downgrading-wine">downgrading</a> back to Wine
+Staging 7.20.</p>
 <table>
 <thead>
 <tr>
@@ -147,6 +151,9 @@ with yabridge. On other distros you should be able to just install
 <p>For a general overview on how to use Wine to install Windows applications,
 check out Wine's <a href="https://wiki.winehq.org/Wine_User%27s_Guide#Using_Wine" rel="nofollow">user
 guide</a>.</p>
+<p><strong>As mentioned above, Wine (Staging) 7.21 and 7.22 may not work correctly
+with yabridge.</strong> See below for <a href="#user-content-downgrading-wine">downgrading instructions</a>
+if yabridge immediately crashes or freezes for you.</p>
 </li>
 <li>
 <p>Depending on your distro you can install yabridge and its yabridgectl
@@ -294,13 +301,13 @@ earlier version of Wine. This can be done as follows:</p>
 <ul>
 <li>
 <p>On Debian, Ubuntu, Linux Mint and other apt-based distros, you can use the
-command below to install Wine Staging 7.8 after you add the WineHQ
+command below to install Wine Staging 7.20 after you add the WineHQ
 repositories linked above. This command is a bit cryptic because on these
 distros the Wine package is split up into multiple smaller packages, and the
 package versions include the distros codename (e.g. <code>focal</code>, or <code>buster</code>) as
 well as some numeric suffix. Change the version to whatever version of Wine
 you want to install, and then run these commands under Bash:</p>
-<div class="highlight highlight-source-shell"><pre>version=7.8
+<div class="highlight highlight-source-shell"><pre>version=7.20
 variant=staging
 codename=<span class="pl-s"><span class="pl-pds">$(</span>shopt -s nullglob<span class="pl-k">;</span> awk <span class="pl-s"><span class="pl-pds">'</span>/^deb https:\/\/dl\.winehq\.org/ { print $3; exit 0 } END { exit 1 }<span class="pl-pds">'</span></span> /etc/apt/sources.list /etc/apt/sources.list.d/<span class="pl-k">*</span>.list <span class="pl-k">||</span> awk <span class="pl-s"><span class="pl-pds">'</span>/^Suites:/ { print $2; exit }<span class="pl-pds">'</span></span> /etc/apt/sources.list /etc/apt/sources.list.d/wine<span class="pl-k">*</span>.sources<span class="pl-pds">)</span></span>
 suffix=<span class="pl-s"><span class="pl-pds">$(</span>dpkg --compare-versions <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$version</span><span class="pl-pds">"</span></span> ge 6.1 <span class="pl-k">&amp;&amp;</span> <span class="pl-s"><span class="pl-pds">((</span>dpkg <span class="pl-k">--</span>compare<span class="pl-k">-</span>versions "<span class="pl-smi">$version</span>" eq <span class="pl-c1">6</span>.<span class="pl-c1">17</span> <span class="pl-k">&amp;&amp;</span> echo "<span class="pl-k">-</span><span class="pl-c1">2</span>") <span class="pl-k">||</span> echo "<span class="pl-k">-</span><span class="pl-c1">1</span>"<span class="pl-pds">))</span></span></span>
@@ -715,11 +722,24 @@ tracker</a> or to ask about it in
 the yabridge <a href="https://discord.gg/pyNeweqadf" rel="nofollow">Discord</a>.</p>
 <ul>
 <li>
+<p>Yabridge may not work correctly with Wine 7.21 and 7.22 depending on how
+yabridge was built because of Wine bug
+<a href="https://bugs.winehq.org/show_bug.cgi?id=53912" rel="nofollow">#53912</a>. If you experience
+crashes or freezes, you may want to stick with Wine Staging 7.20. See above
+for <a href="#user-content-downgrading-wine">downgrading instructions</a>.</p>
+</li>
+<li>
 <p>Both yabridgectl and yabridge try to diagnose many common issues for you. If
 you're running into crashes or other issues, then try launching your DAW from
 a terminal and reading the log output for any clues. Bitwig Studio writes
 plugin output to <code>~/.BitwigStudio/log/engine.log</code>, so you may need to look
 there instead.</p>
+</li>
+<li>
+<p>If a plugin seems to work fine except for the fact that the GUI never seems to
+update when you interact with it, then try installing
+<a href="https://github.com/doitsujin/dxvk">DXVK</a>. Many recent JUCE-based plugins
+don't redraw anymore when using WineD3D.</p>
 </li>
 <li>
 <p>Try to use a clean Wine prefix when testing misbehaving plugins. Either
@@ -937,11 +957,15 @@ some <a href="https://github.com/robbert-vdh/yabridge/blob/master/tools/patch-vs
 to allow Winelib compilation</li>
 <li>Version 1.1.1 of the <a href="https://github.com/free-audio/clap">CLAP headers</a>.</li>
 </ul>
-<p>The project can then be compiled with the command below. You can remove or
+<p>The project can then be compiled with the command below. <del>You can remove or
 change the unity size argument if building takes up too much RAM, or you can
 disable unity builds completely by getting rid of <code>--unity=on</code> at the cost of
-slightly longer build times.</p>
-<div class="highlight highlight-source-shell"><pre>meson setup build --buildtype=release --cross-file=cross-wine.conf --unity=on --unity-size=1000
+slightly longer build times.</del> This build command used to contain the
+<code>--unity=on --unity-size=1000</code> option to reduce compile times and to allow for
+better optimization. These options have temporarily been removed as they'll
+result in a non-functional yabridge when used with Wine 7.21 and 7.22 due to
+Wine bug <a href="https://bugs.winehq.org/show_bug.cgi?id=53912" rel="nofollow">#53912</a>.</p>
+<div class="highlight highlight-source-shell"><pre>meson setup build --buildtype=release --cross-file=cross-wine.conf
 ninja -C build</pre></div>
 <p>After you've finished building you can follow the instructions under the
 <a href="#user-content-usage">usage</a> section on how to set up yabridge.</p>
