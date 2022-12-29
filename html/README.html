@@ -68,13 +68,7 @@ while also staying easy to debug and maintain.</p>
 </li>
 </ul>
 <h2 id="user-content-tested-with"><a aria-hidden="true" class="anchor" href="#user-content-tested-with" id="user-content-tested-with" name="user-content-tested-with"><span aria-hidden="true" class="octicon octicon-link"></span></a>Tested with</h2>
-<p>Yabridge has been tested under the following hosts using Wine Staging <strong>7.20</strong>.
-Wine 7.21 and 7.22 contain a major regression
-<a href="https://bugs.winehq.org/show_bug.cgi?id=53912" rel="nofollow">#53912</a> that break yabridge. The
-current yabridge 5.0.2 build up on GitHub contains several workarounds to still
-be able to use the latest version of Wine with yabridge. But if you're getting
-crashes or freezes, do consider <a href="#user-content-downgrading-wine">downgrading</a> back to Wine
-Staging 7.20.</p>
+<p>Yabridge has been tested under the following hosts using Wine Staging 8.0-rc2.</p>
 <table>
 <thead>
 <tr>
@@ -86,16 +80,16 @@ Staging 7.20.</p>
 </thead>
 <tbody>
 <tr>
-<td>Bitwig Studio 4.4.3*</td>
+<td>Bitwig Studio 4.4.5*</td>
 <td>✔️</td>
 <td>✔️</td>
 <td>✔️</td>
 </tr>
 <tr>
-<td>REAPER 6.69</td>
+<td>REAPER 6.71</td>
 <td>✔️</td>
 <td>✔️</td>
-<td>⚠️ The released REAPER versions do not yet support CLAP</td>
+<td>✔️</td>
 </tr>
 <tr>
 <td>Carla 2.5.0</td>
@@ -151,9 +145,6 @@ with yabridge. On other distros you should be able to just install
 <p>For a general overview on how to use Wine to install Windows applications,
 check out Wine's <a href="https://wiki.winehq.org/Wine_User%27s_Guide#Using_Wine" rel="nofollow">user
 guide</a>.</p>
-<p><strong>As mentioned above, Wine (Staging) 7.21 and 7.22 may not work correctly
-with yabridge.</strong> See below for <a href="#user-content-downgrading-wine">downgrading instructions</a>
-if yabridge immediately crashes or freezes for you.</p>
 </li>
 <li>
 <p>Depending on your distro you can install yabridge and its yabridgectl
@@ -559,6 +550,12 @@ include:</p>
 <code>corefonts</code> or <code>allfonts</code> through <code>winetricks</code> may help.</p>
 </li>
 <li>
+<p>If a plugin seems to work fine except for the fact that the GUI never seems to
+update when you interact with it, then try installing
+<a href="https://github.com/doitsujin/dxvk">DXVK</a>. Many recent JUCE-based plugins
+don't redraw anymore when using WineD3D.</p>
+</li>
+<li>
 <p><strong>Serum</strong> requires you to disable <code>d2d1.dll</code> in <code>winecfg</code> and to install
 <code>gdiplus</code> through <code>winetricks</code>. You may also want to disable the tooltips by
 going to the global settings tab, unchecking 'Show help tooltips', and
@@ -719,14 +716,15 @@ implemented yet. See the <a href="./ROADMAP.md">roadmap</a> for a list of future
 <h2 id="user-content-troubleshooting-common-issues"><a aria-hidden="true" class="anchor" href="#user-content-troubleshooting-common-issues" id="user-content-troubleshooting-common-issues" name="user-content-troubleshooting-common-issues"><span aria-hidden="true" class="octicon octicon-link"></span></a>Troubleshooting common issues</h2>
 <p>If your problem is not listed here, then feel free to post on the <a href="https://github.com/robbert-vdh/yabridge/issues">issue
 tracker</a> or to ask about it in
-the yabridge <a href="https://discord.gg/pyNeweqadf" rel="nofollow">Discord</a>.</p>
+the yabridge <a href="https://discord.gg/pyNeweqadf" rel="nofollow">Discord</a>. Also check the <a href="#user-content-known-issues-and-fixes">known
+issues and fixes</a> section above for help with
+plugin-specific issues.</p>
 <ul>
 <li>
-<p>Yabridge may not work correctly with Wine 7.21 and 7.22 depending on how
-yabridge was built because of Wine bug
-<a href="https://bugs.winehq.org/show_bug.cgi?id=53912" rel="nofollow">#53912</a>. If you experience
-crashes or freezes, you may want to stick with Wine Staging 7.20. See above
-for <a href="#user-content-downgrading-wine">downgrading instructions</a>.</p>
+<p>Old versions of yabridge may not work correctly with Wine 7.21, 7.22, and
+8.0-rc1 because of Wine bug
+<a href="https://bugs.winehq.org/show_bug.cgi?id=53912" rel="nofollow">#53912</a>. Either update to
+yabridge 5.0.3, or <a href="#user-content-downgrading-wine">downgrade to Wine Staging 7.20</a>.</p>
 </li>
 <li>
 <p>Both yabridgectl and yabridge try to diagnose many common issues for you. If
@@ -734,12 +732,6 @@ you're running into crashes or other issues, then try launching your DAW from
 a terminal and reading the log output for any clues. Bitwig Studio writes
 plugin output to <code>~/.BitwigStudio/log/engine.log</code>, so you may need to look
 there instead.</p>
-</li>
-<li>
-<p>If a plugin seems to work fine except for the fact that the GUI never seems to
-update when you interact with it, then try installing
-<a href="https://github.com/doitsujin/dxvk">DXVK</a>. Many recent JUCE-based plugins
-don't redraw anymore when using WineD3D.</p>
 </li>
 <li>
 <p>Try to use a clean Wine prefix when testing misbehaving plugins. Either
@@ -952,20 +944,16 @@ issue</a> with Wine 5.7+.</li>
 <li><a href="https://github.com/Naios/function2">function2</a></li>
 <li><a href="https://github.com/gulrak/filesystem"><code>ghc::filesystem</code></a></li>
 <li><a href="https://github.com/marzer/tomlplusplus">tomlplusplus</a></li>
-<li>Version 3.7.5 of the <a href="https://github.com/robbert-vdh/vst3sdk">VST3 SDK</a> with
+<li>Version 3.7.7 of the <a href="https://github.com/robbert-vdh/vst3sdk">VST3 SDK</a> with
 some <a href="https://github.com/robbert-vdh/yabridge/blob/master/tools/patch-vst3-sdk.sh">patches</a>
 to allow Winelib compilation</li>
-<li>Version 1.1.1 of the <a href="https://github.com/free-audio/clap">CLAP headers</a>.</li>
+<li>Version 1.1.4 of the <a href="https://github.com/free-audio/clap">CLAP headers</a>.</li>
 </ul>
-<p>The project can then be compiled with the command below. <del>You can remove or
+<p>The project can then be compiled with the command below. You can remove or
 change the unity size argument if building takes up too much RAM, or you can
 disable unity builds completely by getting rid of <code>--unity=on</code> at the cost of
-slightly longer build times.</del> This build command used to contain the
-<code>--unity=on --unity-size=1000</code> option to reduce compile times and to allow for
-better optimization. These options have temporarily been removed as they'll
-result in a non-functional yabridge when used with Wine 7.21 and 7.22 due to
-Wine bug <a href="https://bugs.winehq.org/show_bug.cgi?id=53912" rel="nofollow">#53912</a>.</p>
-<div class="highlight highlight-source-shell"><pre>meson setup build --buildtype=release --cross-file=cross-wine.conf
+slightly longer build times.</p>
+<div class="highlight highlight-source-shell"><pre>meson setup build --buildtype=release --cross-file=cross-wine.conf --unity=on --unity-size=1000
 ninja -C build</pre></div>
 <p>After you've finished building you can follow the instructions under the
 <a href="#user-content-usage">usage</a> section on how to set up yabridge.</p>

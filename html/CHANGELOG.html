@@ -18,8 +18,37 @@
 <p>The format is based on <a href="https://keepachangelog.com/en/1.0.0/" rel="nofollow">Keep a Changelog</a>,
 and this project adheres to <a href="https://semver.org/spec/v2.0.0.html" rel="nofollow">Semantic
 Versioning</a>.</p>
+<h2 id="user-content-503---2022-20-23"><a aria-hidden="true" class="anchor" href="#user-content-503---2022-20-23" id="user-content-503---2022-20-23" name="user-content-503---2022-20-23"><span aria-hidden="true" class="octicon octicon-link"></span></a>[5.0.3] - 2022-20-23</h2>
+<h3 id="user-content-changed"><a aria-hidden="true" class="anchor" href="#user-content-changed" id="user-content-changed" name="user-content-changed"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changed</h3>
+<ul>
+<li>The yabridge 5.0.3 binaries up on the GitHub releases page (and in the
+<a href="https://aur.archlinux.org/packages/yabridge-bin" rel="nofollow"><code>yabridge-bin</code></a> AUR package)
+now work again with every Wine version after Wine 5.7, including 7.21, 7.22,
+and the 8.0 release candidates. All workarounds for Wine 7.21 and 7.22 have
+been reverted. See Wine bug
+<a href="https://bugs.winehq.org/show_bug.cgi?id=53912" rel="nofollow">#53912</a> for more information.</li>
+</ul>
+<h3 id="user-content-packaging-notes"><a aria-hidden="true" class="anchor" href="#user-content-packaging-notes" id="user-content-packaging-notes" name="user-content-packaging-notes"><span aria-hidden="true" class="octicon octicon-link"></span></a>Packaging notes</h3>
+<ul>
+<li>The VST3 dependency has been updated to target version 3.7.7 with tag
+<code>v3.7.7_build_19-patched</code>.</li>
+<li>The CLAP dependency has been updated to target version 1.1.4.</li>
+<li>The <code>patch-vst3-sdk.sh</code> script now applies a handwritten diff to the SDK
+instead of patching the SDK using sed. This makes it easier to use older (but
+still API-compatible) VST3 SDK versions with yabridge and it makes the
+patching less brittle. The patches can be found in <code>tools/vst3-sdk-patches</code>.</li>
+<li>Since the workarounds from yabridge 5.0.1 and 5.0.2 have been reverted, the
+Meson build will now throw an error when trying to build against Wine 7.21,
+7.22, or 8.0-rc1. Yabridge binaries built against these Wine versions will not
+work correctly.</li>
+<li>Yabridge built against Wine 8.0-rc2 will also work with older Wine versions,
+including the aforementioned ones that previously required workarounds.
+Yabridge built against older Wine versions will not work with Wine 8.0-rc2 or
+later.</li>
+<li>Unity builds can safely be re-enabled again.</li>
+</ul>
 <h2 id="user-content-502---2022-11-28"><a aria-hidden="true" class="anchor" href="#user-content-502---2022-11-28" id="user-content-502---2022-11-28" name="user-content-502---2022-11-28"><span aria-hidden="true" class="octicon octicon-link"></span></a>[5.0.2] - 2022-11-28</h2>
-<h1 id="user-content-changed"><a aria-hidden="true" class="anchor" href="#user-content-changed" id="user-content-changed" name="user-content-changed"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changed</h1>
+<h1 id="user-content-changed-1"><a aria-hidden="true" class="anchor" href="#user-content-changed-1" id="user-content-changed-1" name="user-content-changed-1"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changed</h1>
 <ul>
 <li>The yabridge builds on the GitHub releases page now have the unity build
 option disabled. This <em>may</em> work around the same Wine bug
@@ -41,7 +70,7 @@ dragging the editor window around. The change may also help with other slow to
 redraw GUI, and especially with window managers that send excessive events on
 window movement like in Cinnamon and XFCE.</li>
 </ul>
-<h3 id="user-content-packaging-notes"><a aria-hidden="true" class="anchor" href="#user-content-packaging-notes" id="user-content-packaging-notes" name="user-content-packaging-notes"><span aria-hidden="true" class="octicon octicon-link"></span></a>Packaging notes</h3>
+<h3 id="user-content-packaging-notes-1"><a aria-hidden="true" class="anchor" href="#user-content-packaging-notes-1" id="user-content-packaging-notes-1" name="user-content-packaging-notes-1"><span aria-hidden="true" class="octicon octicon-link"></span></a>Packaging notes</h3>
 <ul>
 <li>The <code>--unity=on</code> build option should be removed for the time being as this
 together with the VST3 SDK triggers the above mentioned <a href="https://bugs.winehq.org/show_bug.cgi?id=53912" rel="nofollow">Wine
@@ -106,7 +135,7 @@ replaces the older <code>vst3_no_scaling</code> option.</p>
 <li>The <code>vst3_no_scaling</code> compatibility option has been removed in favor of the
 new <code>editor_disable_host_scaling</code> option.</li>
 </ul>
-<h1 id="user-content-changed-1"><a aria-hidden="true" class="anchor" href="#user-content-changed-1" id="user-content-changed-1" name="user-content-changed-1"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changed</h1>
+<h1 id="user-content-changed-2"><a aria-hidden="true" class="anchor" href="#user-content-changed-2" id="user-content-changed-2" name="user-content-changed-2"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changed</h1>
 <ul>
 <li>Slightly optimized the use of serialization buffers to reduce memory usage for
 VST3 audio threads. This change also potentially speeds up parameter
@@ -122,7 +151,7 @@ converting Windows file paths.</li>
 <ul>
 <li>Added support for setting up CLAP plugins.</li>
 </ul>
-<h3 id="user-content-packaging-notes-1"><a aria-hidden="true" class="anchor" href="#user-content-packaging-notes-1" id="user-content-packaging-notes-1" name="user-content-packaging-notes-1"><span aria-hidden="true" class="octicon octicon-link"></span></a>Packaging notes</h3>
+<h3 id="user-content-packaging-notes-2"><a aria-hidden="true" class="anchor" href="#user-content-packaging-notes-2" id="user-content-packaging-notes-2" name="user-content-packaging-notes-2"><span aria-hidden="true" class="octicon octicon-link"></span></a>Packaging notes</h3>
 <ul>
 <li>There are new <code>libyabridge-clap.so</code> and <code>libyabridge-chainloader-clap.so</code>
 files need to be included in the package.</li>
@@ -183,7 +212,7 @@ initialized, after the data had just been deinitialized.</li>
 <li>Fixed a regression from yabridge 4.0.0 where VST3 plugins in the 'new' Windows
 VST3 bundle format, like <em>Sforzando</em>, were not set up correctly.</li>
 </ul>
-<h3 id="user-content-packaging-notes-2"><a aria-hidden="true" class="anchor" href="#user-content-packaging-notes-2" id="user-content-packaging-notes-2" name="user-content-packaging-notes-2"><span aria-hidden="true" class="octicon octicon-link"></span></a>Packaging notes</h3>
+<h3 id="user-content-packaging-notes-3"><a aria-hidden="true" class="anchor" href="#user-content-packaging-notes-3" id="user-content-packaging-notes-3" name="user-content-packaging-notes-3"><span aria-hidden="true" class="octicon octicon-link"></span></a>Packaging notes</h3>
 <ul>
 <li>The new <code>system-asio</code> build option forces Asio to be used from the standard
 include directories. Otherwise the dependency is defined as a regular Meson
@@ -228,7 +257,7 @@ safely without requiring any action from your side.</li>
 <li>Added support for the <code>effBeginLoadBank</code> and <code>effBeginLoadProgram</code> VST2
 opcodes for loading state as a program or a program bank.</li>
 </ul>
-<h3 id="user-content-changed-2"><a aria-hidden="true" class="anchor" href="#user-content-changed-2" id="user-content-changed-2" name="user-content-changed-2"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changed</h3>
+<h3 id="user-content-changed-3"><a aria-hidden="true" class="anchor" href="#user-content-changed-3" id="user-content-changed-3" name="user-content-changed-3"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changed</h3>
 <ul>
 <li>Almost the entirety of yabridge's backend has been rewritten to get rid of all
 dependencies on the Boost libraries. As a consequence, the runtime dependency
@@ -347,7 +376,7 @@ in <code>yabridgectl status</code> has changed accordingly.</p>
 library.</p>
 </li>
 </ul>
-<h3 id="user-content-packaging-notes-3"><a aria-hidden="true" class="anchor" href="#user-content-packaging-notes-3" id="user-content-packaging-notes-3" name="user-content-packaging-notes-3"><span aria-hidden="true" class="octicon octicon-link"></span></a>Packaging notes</h3>
+<h3 id="user-content-packaging-notes-4"><a aria-hidden="true" class="anchor" href="#user-content-packaging-notes-4" id="user-content-packaging-notes-4" name="user-content-packaging-notes-4"><span aria-hidden="true" class="octicon octicon-link"></span></a>Packaging notes</h3>
 <ul>
 <li>
 <code>libyabridge-chainloader-vst2.so</code> and <code>libyabridge-chainloader-vst3.so</code> are
@@ -367,7 +396,7 @@ Meson version to be bumped up to <strong>Meson 0.56</strong> from 0.55.</li>
 <li>Yabridge now targets VST3 SDK version 3.7.5 with git tag <code>v3.7.5_build_44-patched</code>.</li>
 </ul>
 <h2 id="user-content-381---2022-03-08"><a aria-hidden="true" class="anchor" href="#user-content-381---2022-03-08" id="user-content-381---2022-03-08" name="user-content-381---2022-03-08"><span aria-hidden="true" class="octicon octicon-link"></span></a>[3.8.1] - 2022-03-08</h2>
-<h3 id="user-content-changed-3"><a aria-hidden="true" class="anchor" href="#user-content-changed-3" id="user-content-changed-3" name="user-content-changed-3"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changed</h3>
+<h3 id="user-content-changed-4"><a aria-hidden="true" class="anchor" href="#user-content-changed-4" id="user-content-changed-4" name="user-content-changed-4"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changed</h3>
 <ul>
 <li>Change the low <code>RLIMIT_RTTIME</code> warning to mention setting up realtime
 priviliges instead of changing PipeWire's config now that PipeWire MRs
@@ -421,7 +450,7 @@ XT</a>'s Windows VST3 version since
 very few if any other plugins do this right now, but other plugins may start
 doing this as well in the future.</li>
 </ul>
-<h3 id="user-content-changed-4"><a aria-hidden="true" class="anchor" href="#user-content-changed-4" id="user-content-changed-4" name="user-content-changed-4"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changed</h3>
+<h3 id="user-content-changed-5"><a aria-hidden="true" class="anchor" href="#user-content-changed-5" id="user-content-changed-5" name="user-content-changed-5"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changed</h3>
 <ul>
 <li>Added support for Wine 6.23's new fixed winedbg command line argument
 handling.</li>
@@ -475,7 +504,7 @@ completely in yabridge 4.0.</li>
 <li>Blacklisted symlinks and symlinked directories are now handled correctly when
 syncing.</li>
 </ul>
-<h3 id="user-content-packaging-notes-4"><a aria-hidden="true" class="anchor" href="#user-content-packaging-notes-4" id="user-content-packaging-notes-4" name="user-content-packaging-notes-4"><span aria-hidden="true" class="octicon octicon-link"></span></a>Packaging notes</h3>
+<h3 id="user-content-packaging-notes-5"><a aria-hidden="true" class="anchor" href="#user-content-packaging-notes-5" id="user-content-packaging-notes-5" name="user-content-packaging-notes-5"><span aria-hidden="true" class="octicon octicon-link"></span></a>Packaging notes</h3>
 <ul>
 <li>The tomlplusplus wrap dependency has been updated to version 3.0.1 because of
 breaking API changes in version 3.0.</li>
@@ -490,7 +519,7 @@ sockets and other temporary files in. This is only useful when running the
 Wine process under a separate namespace. If you don't know what this means,
 then you probably don't need this!</li>
 </ul>
-<h3 id="user-content-changed-5"><a aria-hidden="true" class="anchor" href="#user-content-changed-5" id="user-content-changed-5" name="user-content-changed-5"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changed</h3>
+<h3 id="user-content-changed-6"><a aria-hidden="true" class="anchor" href="#user-content-changed-6" id="user-content-changed-6" name="user-content-changed-6"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changed</h3>
 <ul>
 <li>Added a workaround for a new
 <a href="https://bugs.winehq.org/show_bug.cgi?id=51919" rel="nofollow">bug</a> in Wine 6.20 that would
@@ -508,7 +537,7 @@ so we now prevent that from happening.</li>
 connections now get removed when those processes shut down. Previously this
 would leave behind a file in the temporary directory.</li>
 </ul>
-<h3 id="user-content-packaging-notes-5"><a aria-hidden="true" class="anchor" href="#user-content-packaging-notes-5" id="user-content-packaging-notes-5" name="user-content-packaging-notes-5"><span aria-hidden="true" class="octicon octicon-link"></span></a>Packaging notes</h3>
+<h3 id="user-content-packaging-notes-6"><a aria-hidden="true" class="anchor" href="#user-content-packaging-notes-6" id="user-content-packaging-notes-6" name="user-content-packaging-notes-6"><span aria-hidden="true" class="octicon octicon-link"></span></a>Packaging notes</h3>
 <ul>
 <li>All Meson wraps now use <code>wrap-git</code> instead of downloading tarballs from
 GitHub. Previously the bitsery and function2 wraps would use source tarballs.</li>
@@ -550,7 +579,7 @@ Crystallizer</em>.</li>
 <li>The <code>editor_double_embed</code> option added in yabridge 1.4.0 has been removed as
 the <code>editor_coordinate_hack</code> option supersedes it.</li>
 </ul>
-<h3 id="user-content-changed-6"><a aria-hidden="true" class="anchor" href="#user-content-changed-6" id="user-content-changed-6" name="user-content-changed-6"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changed</h3>
+<h3 id="user-content-changed-7"><a aria-hidden="true" class="anchor" href="#user-content-changed-7" id="user-content-changed-7" name="user-content-changed-7"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changed</h3>
 <ul>
 <li>The Wine plugin host applications now print their version information before
 the <code>Usage: </code> string when invoked without any command line arguments.</li>
@@ -586,7 +615,7 @@ implementation now has a warmup phase to prevent this from happening.</li>
 <li>
 <code>yabridgectl rm</code> and <code>yabridgectl blacklist rm</code> now accept relative paths.</li>
 </ul>
-<h3 id="user-content-packaging-notes-6"><a aria-hidden="true" class="anchor" href="#user-content-packaging-notes-6" id="user-content-packaging-notes-6" name="user-content-packaging-notes-6"><span aria-hidden="true" class="octicon octicon-link"></span></a>Packaging notes</h3>
+<h3 id="user-content-packaging-notes-7"><a aria-hidden="true" class="anchor" href="#user-content-packaging-notes-7" id="user-content-packaging-notes-7" name="user-content-packaging-notes-7"><span aria-hidden="true" class="octicon octicon-link"></span></a>Packaging notes</h3>
 <ul>
 <li>We now target VST3 SDK version 3.7.3 with git tag <code>v3.7.3_build_20-patched</code>.</li>
 <li>Because of an
@@ -625,7 +654,7 @@ temporarily override this behaviour and allow all keyboard input to go
 directly to Wine. This can also be useful for <em>Voxengo</em> plugins, which don't
 grab input focus in their settings and license dialogs.</li>
 </ul>
-<h3 id="user-content-changed-7"><a aria-hidden="true" class="anchor" href="#user-content-changed-7" id="user-content-changed-7" name="user-content-changed-7"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changed</h3>
+<h3 id="user-content-changed-8"><a aria-hidden="true" class="anchor" href="#user-content-changed-8" id="user-content-changed-8" name="user-content-changed-8"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changed</h3>
 <ul>
 <li>Added more tracing for the input focus handling when using the <code>+editor</code>
 <code>YABRIDGE_DEBUG_LEVEL</code> flag.</li>
@@ -678,7 +707,7 @@ variable that causes debug tracing information about the plugin editor window
 to be printed. This can be useful for diagnosing DAW or window manager
 specific issues.</li>
 </ul>
-<h3 id="user-content-changed-8"><a aria-hidden="true" class="anchor" href="#user-content-changed-8" id="user-content-changed-8" name="user-content-changed-8"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changed</h3>
+<h3 id="user-content-changed-9"><a aria-hidden="true" class="anchor" href="#user-content-changed-9" id="user-content-changed-9" name="user-content-changed-9"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changed</h3>
 <ul>
 <li>The way editor embedding works has been rewritten. Yabridge now inserts a
 wrapper window between the host's parent window and the embedded Wine window
@@ -769,7 +798,7 @@ there.</li>
 needed when running the Wine process under a separate namespace. If you don't
 know that you need this, then you probably don't need this!</li>
 </ul>
-<h3 id="user-content-changed-9"><a aria-hidden="true" class="anchor" href="#user-content-changed-9" id="user-content-changed-9" name="user-content-changed-9"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changed</h3>
+<h3 id="user-content-changed-10"><a aria-hidden="true" class="anchor" href="#user-content-changed-10" id="user-content-changed-10" name="user-content-changed-10"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changed</h3>
 <ul>
 <li>The audio processing implementation for both VST2 and VST3 plugins has been
 completely rewritten to use both shared memory and message passing to cut down
@@ -907,7 +936,7 @@ redirected to a pipe.</li>
 some small value. This happens when using PipeWire with rtkit, and it can
 cause crashes when loading plugins.</li>
 </ul>
-<h3 id="user-content-changed-10"><a aria-hidden="true" class="anchor" href="#user-content-changed-10" id="user-content-changed-10" name="user-content-changed-10"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changed</h3>
+<h3 id="user-content-changed-11"><a aria-hidden="true" class="anchor" href="#user-content-changed-11" id="user-content-changed-11" name="user-content-changed-11"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changed</h3>
 <ul>
 <li>Added a timed cache for the <code>IPlugView::canResize()</code> VST3 function so the
 result will be remembered during an active resize. This makes resizing VST3
@@ -1030,7 +1059,7 @@ If it detects that the process is no longer alive, yabridge will close the
 sockets and shut down the bridged plugin to prevent any more dangling
 processes from sticking around.</li>
 </ul>
-<h3 id="user-content-changed-11"><a aria-hidden="true" class="anchor" href="#user-content-changed-11" id="user-content-changed-11" name="user-content-changed-11"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changed</h3>
+<h3 id="user-content-changed-12"><a aria-hidden="true" class="anchor" href="#user-content-changed-12" id="user-content-changed-12" name="user-content-changed-12"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changed</h3>
 <ul>
 <li>Most common VST2 functions that don't have any arguments are now handled
 explicilty. Yabridge could always automatically support most VST2 functions by
@@ -1157,7 +1186,7 @@ most likely won't ever have to use this, but this lets you skip over files and
 directories in yabridgectl's indexing process.</li>
 <li>Minor spelling fixes.</li>
 </ul>
-<h3 id="user-content-packaging-notes-7"><a aria-hidden="true" class="anchor" href="#user-content-packaging-notes-7" id="user-content-packaging-notes-7" name="user-content-packaging-notes-7"><span aria-hidden="true" class="octicon octicon-link"></span></a>Packaging notes</h3>
+<h3 id="user-content-packaging-notes-8"><a aria-hidden="true" class="anchor" href="#user-content-packaging-notes-8" id="user-content-packaging-notes-8" name="user-content-packaging-notes-8"><span aria-hidden="true" class="octicon octicon-link"></span></a>Packaging notes</h3>
 <ul>
 <li>The Meson wrap dependencies for <code>bitsery</code>, <code>function2</code> and <code>tomlplusplus</code> are
 now defined using <code>dependency()</code> with a subproject fallback instead of using
@@ -1175,7 +1204,7 @@ fixes VST3 sidechaining in <em>Renoise</em>, and prevents a number of VST3 plugi
 with a sidechain input from causing <em>Ardour</em> and <em>Mixbus</em> to freeze or crash.</li>
 </ul>
 <h2 id="user-content-301---2021-02-26"><a aria-hidden="true" class="anchor" href="#user-content-301---2021-02-26" id="user-content-301---2021-02-26" name="user-content-301---2021-02-26"><span aria-hidden="true" class="octicon octicon-link"></span></a>[3.0.1] - 2021-02-26</h2>
-<h3 id="user-content-changed-12"><a aria-hidden="true" class="anchor" href="#user-content-changed-12" id="user-content-changed-12" name="user-content-changed-12"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changed</h3>
+<h3 id="user-content-changed-13"><a aria-hidden="true" class="anchor" href="#user-content-changed-13" id="user-content-changed-13" name="user-content-changed-13"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changed</h3>
 <ul>
 <li>Wine 6.2 introduced a
 <a href="https://bugs.winehq.org/show_bug.cgi?id=50670" rel="nofollow">regression</a> that would cause
@@ -1247,7 +1276,7 @@ cause the GUIs to scale correctly at 200%.</li>
 <li>Added the <code>with-vst3</code> compile time option to control whether yabridge should
 be built with VST3 support. This is enabled by default.</li>
 </ul>
-<h3 id="user-content-changed-13"><a aria-hidden="true" class="anchor" href="#user-content-changed-13" id="user-content-changed-13" name="user-content-changed-13"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changed</h3>
+<h3 id="user-content-changed-14"><a aria-hidden="true" class="anchor" href="#user-content-changed-14" id="user-content-changed-14" name="user-content-changed-14"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changed</h3>
 <ul>
 <li>
 <p><code>libyabridge.so</code> is now called <code>libyabridge-vst2.so</code>. If you're using
@@ -1388,7 +1417,7 @@ resutling in very bad performance. See the <a href="https://github.com/robbert-v
 options</a>
 section of the readme for more information on how to enable this.</li>
 </ul>
-<h3 id="user-content-changed-14"><a aria-hidden="true" class="anchor" href="#user-content-changed-14" id="user-content-changed-14" name="user-content-changed-14"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changed</h3>
+<h3 id="user-content-changed-15"><a aria-hidden="true" class="anchor" href="#user-content-changed-15" id="user-content-changed-15" name="user-content-changed-15"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changed</h3>
 <ul>
 <li>When <code>YABRIDGE_DEBUG_LEVEL</code> is set to 2 or higher and a plugin asks the host
 for the current position in the song, yabridge will now print that position in
@@ -1421,7 +1450,7 @@ would be sufficient, but sometimes changes to yabridgectl will be incompatible
 with the current release so it's nicer to also have a separate regular
 package.</li>
 </ul>
-<h3 id="user-content-changed-15"><a aria-hidden="true" class="anchor" href="#user-content-changed-15" id="user-content-changed-15" name="user-content-changed-15"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changed</h3>
+<h3 id="user-content-changed-16"><a aria-hidden="true" class="anchor" href="#user-content-changed-16" id="user-content-changed-16" name="user-content-changed-16"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changed</h3>
 <ul>
 <li>Yabridge will now always search for <code>yabridge-host.exe</code> in
 <code>~/.local/share/yabridge</code> even if that directory is not in the search path.
@@ -1482,7 +1511,7 @@ testing this extensively to make sure that these changes don't not introduce
 any regressions, but please let me know if this did break anything for you.</p>
 </li>
 </ul>
-<h3 id="user-content-changed-16"><a aria-hidden="true" class="anchor" href="#user-content-changed-16" id="user-content-changed-16" name="user-content-changed-16"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changed</h3>
+<h3 id="user-content-changed-17"><a aria-hidden="true" class="anchor" href="#user-content-changed-17" id="user-content-changed-17" name="user-content-changed-17"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changed</h3>
 <ul>
 <li>The way the Wine process handles threading has also been completely reworked
 as part of the communication rework.</li>
@@ -1539,7 +1568,7 @@ after setting up a single new plugin through yabridgectl. Running
 directories that no longer exist using <code>yabridgectl rm</code>.</li>
 </ul>
 <h2 id="user-content-170---2020-10-13"><a aria-hidden="true" class="anchor" href="#user-content-170---2020-10-13" id="user-content-170---2020-10-13" name="user-content-170---2020-10-13"><span aria-hidden="true" class="octicon octicon-link"></span></a>[1.7.0] - 2020-10-13</h2>
-<h3 id="user-content-changed-17"><a aria-hidden="true" class="anchor" href="#user-content-changed-17" id="user-content-changed-17" name="user-content-changed-17"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changed</h3>
+<h3 id="user-content-changed-18"><a aria-hidden="true" class="anchor" href="#user-content-changed-18" id="user-content-changed-18" name="user-content-changed-18"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changed</h3>
 <ul>
 <li>
 <p>The way keyboard input works has been completely rewritten to be more reliable
@@ -1620,7 +1649,7 @@ doesn't expect it, see
 <a href="https://github.com/robbert-vdh/yabridge#known-issues-and-fixes">readme</a>
 contains instructions on how to enable this.</li>
 </ul>
-<h3 id="user-content-changed-18"><a aria-hidden="true" class="anchor" href="#user-content-changed-18" id="user-content-changed-18" name="user-content-changed-18"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changed</h3>
+<h3 id="user-content-changed-19"><a aria-hidden="true" class="anchor" href="#user-content-changed-19" id="user-content-changed-19" name="user-content-changed-19"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changed</h3>
 <ul>
 <li>Don't print calls to <code>effIdle()</code> when <code>YABRIDGE_DEBUG_LEVEL</code> is set to 1.</li>
 </ul>
@@ -1650,7 +1679,7 @@ enabled on a per-plugin basis in the plugin configuration. See the
 <a href="https://github.com/robbert-vdh/yabridge#compatibility-options">readme</a>
 for more details.</li>
 </ul>
-<h3 id="user-content-changed-19"><a aria-hidden="true" class="anchor" href="#user-content-changed-19" id="user-content-changed-19" name="user-content-changed-19"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changed</h3>
+<h3 id="user-content-changed-20"><a aria-hidden="true" class="anchor" href="#user-content-changed-20" id="user-content-changed-20" name="user-content-changed-20"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changed</h3>
 <ul>
 <li>Both parts of yabridge will now run with realtime priority if available. This
 can significantly reduce overall latency and spikes. Wine itself will still
@@ -1699,7 +1728,7 @@ of the new <code>with-bitbridge</code> and <code>with-winedbg</code> options. Th
 continue to work until they are removed in yabridge 2.0.0.</li>
 </ul>
 <h2 id="user-content-121---2020-06-20"><a aria-hidden="true" class="anchor" href="#user-content-121---2020-06-20" id="user-content-121---2020-06-20" name="user-content-121---2020-06-20"><span aria-hidden="true" class="octicon octicon-link"></span></a>[1.2.1] - 2020-06-20</h2>
-<h3 id="user-content-changed-20"><a aria-hidden="true" class="anchor" href="#user-content-changed-20" id="user-content-changed-20" name="user-content-changed-20"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changed</h3>
+<h3 id="user-content-changed-21"><a aria-hidden="true" class="anchor" href="#user-content-changed-21" id="user-content-changed-21" name="user-content-changed-21"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changed</h3>
 <ul>
 <li>When building from source, only statically link Boost when the
 <code>with-static-boost</code> option is enabled.</li>
@@ -1733,7 +1762,7 @@ of plugins that can benefit from this are FabFilter Pro-Q 3, MMultiAnalyzer,
 and the iZotope mixing plugins. See the readme for instructions on how to set
 this up.</li>
 </ul>
-<h3 id="user-content-changed-21"><a aria-hidden="true" class="anchor" href="#user-content-changed-21" id="user-content-changed-21" name="user-content-changed-21"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changed</h3>
+<h3 id="user-content-changed-22"><a aria-hidden="true" class="anchor" href="#user-content-changed-22" id="user-content-changed-22" name="user-content-changed-22"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changed</h3>
 <ul>
 <li>Changed architecture to use one fewer socket.</li>
 <li>GUI events are now always handled on a steady timer rather than being
@@ -1774,7 +1803,7 @@ Superior Drummer 3 and the Roland Cloud synths in Bitwig Studio.</li>
 <li>Fixed an issue where plugin removal could cause Ardour and Mixbus to crash.</li>
 </ul>
 <h2 id="user-content-111---2020-05-09"><a aria-hidden="true" class="anchor" href="#user-content-111---2020-05-09" id="user-content-111---2020-05-09" name="user-content-111---2020-05-09"><span aria-hidden="true" class="octicon octicon-link"></span></a>[1.1.1] - 2020-05-09</h2>
-<h3 id="user-content-changed-22"><a aria-hidden="true" class="anchor" href="#user-content-changed-22" id="user-content-changed-22" name="user-content-changed-22"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changed</h3>
+<h3 id="user-content-changed-23"><a aria-hidden="true" class="anchor" href="#user-content-changed-23" id="user-content-changed-23" name="user-content-changed-23"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changed</h3>
 <ul>
 <li>Changed installation recommendations to only install using symlinks with hosts
 that support individually sandboxed plugins.</li>
@@ -1797,7 +1826,7 @@ yabridge to work under <em>Renoise</em>.</li>
 <li>Added automated development builds for yabridge, available by clicking on the
 'Automated builds' badge in the project readme.</li>
 </ul>
-<h3 id="user-content-changed-23"><a aria-hidden="true" class="anchor" href="#user-content-changed-23" id="user-content-changed-23" name="user-content-changed-23"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changed</h3>
+<h3 id="user-content-changed-24"><a aria-hidden="true" class="anchor" href="#user-content-changed-24" id="user-content-changed-24" name="user-content-changed-24"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changed</h3>
 <ul>
 <li>Changed the plugin detection mechanism to support yet another way of
 symlinking plugins. Now you can use a symlink to a copy of <code>libyabridge.so</code>
