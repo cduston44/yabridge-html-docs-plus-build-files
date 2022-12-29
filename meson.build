@@ -1,7 +1,7 @@
 project(
   'vstsdk',
   'cpp',
-  version : '3.7.5',
+  version : '3.7.7',
   default_options : ['cpp_std=c++17'],
 )
 
