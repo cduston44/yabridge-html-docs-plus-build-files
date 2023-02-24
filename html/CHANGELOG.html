@@ -18,7 +18,29 @@
 <p>The format is based on <a href="https://keepachangelog.com/en/1.0.0/" rel="nofollow">Keep a Changelog</a>,
 and this project adheres to <a href="https://semver.org/spec/v2.0.0.html" rel="nofollow">Semantic
 Versioning</a>.</p>
-<h2 id="user-content-503---2022-20-23"><a aria-hidden="true" class="anchor" href="#user-content-503---2022-20-23" id="user-content-503---2022-20-23" name="user-content-503---2022-20-23"><span aria-hidden="true" class="octicon octicon-link"></span></a>[5.0.3] - 2022-20-23</h2>
+<h2 id="user-content-504---2023-02-23"><a aria-hidden="true" class="anchor" href="#user-content-504---2023-02-23" id="user-content-504---2023-02-23" name="user-content-504---2023-02-23"><span aria-hidden="true" class="octicon octicon-link"></span></a>[5.0.4] - 2023-02-23</h2>
+<h3 id="user-content-fixed"><a aria-hidden="true" class="anchor" href="#user-content-fixed" id="user-content-fixed" name="user-content-fixed"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
+<ul>
+<li>Fixed a regression from yabridge 4.0.0 where plugin groups would not exit
+correctly. When removing a plugin instance that was part of a plugin group, it
+would block until the group host process had exited. This in turn resulted in
+hangs if the group host process hosted more than one plugin instance.</li>
+<li>Configuring the Meson build now works correctly on Wine 8.0 final. Meson's
+version comparison function considers <code>8.0</code> to be a lower version than
+<code>8.0rc2</code>.</li>
+<li>The tomlplusplus dependency in the Meson build new avoids linking against
+tomlplusplus' shared libraries. These were recently introduced, and depending
+on the build environment Meson may still try to link them despite tomlplusplus
+being used in headers only mode. This is to keep yabridge's plugin libraries
+free of dependencies outside of the C and C++ standard libraries, avoiding
+potential symbol clashes.</li>
+</ul>
+<h3 id="user-content-packaging-notes"><a aria-hidden="true" class="anchor" href="#user-content-packaging-notes" id="user-content-packaging-notes" name="user-content-packaging-notes"><span aria-hidden="true" class="octicon octicon-link"></span></a>Packaging notes</h3>
+<ul>
+<li>The CLAP dependency has been updated to target version 1.1.7.</li>
+<li>The tomlplusplus dependency has been updated to target version 3.3.0.</li>
+</ul>
+<h2 id="user-content-503---2022-12-23"><a aria-hidden="true" class="anchor" href="#user-content-503---2022-12-23" id="user-content-503---2022-12-23" name="user-content-503---2022-12-23"><span aria-hidden="true" class="octicon octicon-link"></span></a>[5.0.3] - 2022-12-23</h2>
 <h3 id="user-content-changed"><a aria-hidden="true" class="anchor" href="#user-content-changed" id="user-content-changed" name="user-content-changed"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changed</h3>
 <ul>
 <li>The yabridge 5.0.3 binaries up on the GitHub releases page (and in the
@@ -28,7 +50,7 @@ and the 8.0 release candidates. All workarounds for Wine 7.21 and 7.22 have
 been reverted. See Wine bug
 <a href="https://bugs.winehq.org/show_bug.cgi?id=53912" rel="nofollow">#53912</a> for more information.</li>
 </ul>
-<h3 id="user-content-packaging-notes"><a aria-hidden="true" class="anchor" href="#user-content-packaging-notes" id="user-content-packaging-notes" name="user-content-packaging-notes"><span aria-hidden="true" class="octicon octicon-link"></span></a>Packaging notes</h3>
+<h3 id="user-content-packaging-notes-1"><a aria-hidden="true" class="anchor" href="#user-content-packaging-notes-1" id="user-content-packaging-notes-1" name="user-content-packaging-notes-1"><span aria-hidden="true" class="octicon octicon-link"></span></a>Packaging notes</h3>
 <ul>
 <li>The VST3 dependency has been updated to target version 3.7.7 with tag
 <code>v3.7.7_build_19-patched</code>.</li>
@@ -62,7 +84,7 @@ to Wine Staging 7.20.</li>
 <li>Yabridge's build system now errors out when enabling unity builds while
 compiling with Wine 7.21 and 7.22.</li>
 </ul>
-<h1 id="user-content-fixed"><a aria-hidden="true" class="anchor" href="#user-content-fixed" id="user-content-fixed" name="user-content-fixed"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h1>
+<h1 id="user-content-fixed-1"><a aria-hidden="true" class="anchor" href="#user-content-fixed-1" id="user-content-fixed-1" name="user-content-fixed-1"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h1>
 <ul>
 <li>Changed the behavior when setting window positions for yabridge's editor. This
 avoids a painfully slow redraw in the <em>Audio Nebula Aurora FM</em> plugin when
@@ -70,7 +92,7 @@ dragging the editor window around. The change may also help with other slow to
 redraw GUI, and especially with window managers that send excessive events on
 window movement like in Cinnamon and XFCE.</li>
 </ul>
-<h3 id="user-content-packaging-notes-1"><a aria-hidden="true" class="anchor" href="#user-content-packaging-notes-1" id="user-content-packaging-notes-1" name="user-content-packaging-notes-1"><span aria-hidden="true" class="octicon octicon-link"></span></a>Packaging notes</h3>
+<h3 id="user-content-packaging-notes-2"><a aria-hidden="true" class="anchor" href="#user-content-packaging-notes-2" id="user-content-packaging-notes-2" name="user-content-packaging-notes-2"><span aria-hidden="true" class="octicon octicon-link"></span></a>Packaging notes</h3>
 <ul>
 <li>The <code>--unity=on</code> build option should be removed for the time being as this
 together with the VST3 SDK triggers the above mentioned <a href="https://bugs.winehq.org/show_bug.cgi?id=53912" rel="nofollow">Wine
@@ -80,7 +102,7 @@ with Wine Staging 7.21 or 7.22 after building to make sure the build works
 correctly. It should print a usage message if it does.</li>
 </ul>
 <h2 id="user-content-501---2022-11-14"><a aria-hidden="true" class="anchor" href="#user-content-501---2022-11-14" id="user-content-501---2022-11-14" name="user-content-501---2022-11-14"><span aria-hidden="true" class="octicon octicon-link"></span></a>[5.0.1] - 2022-11-14</h2>
-<h1 id="user-content-fixed-1"><a aria-hidden="true" class="anchor" href="#user-content-fixed-1" id="user-content-fixed-1" name="user-content-fixed-1"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h1>
+<h1 id="user-content-fixed-2"><a aria-hidden="true" class="anchor" href="#user-content-fixed-2" id="user-content-fixed-2" name="user-content-fixed-2"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h1>
 <ul>
 <li>Added a temporary workaround for yabridge hanging indefinitely on startup as
 the result of a new bug in Wine 7.21:
@@ -141,7 +163,7 @@ new <code>editor_disable_host_scaling</code> option.</li>
 VST3 audio threads. This change also potentially speeds up parameter
 information queries for parameters with lots of associated text.</li>
 </ul>
-<h3 id="user-content-fixed-2"><a aria-hidden="true" class="anchor" href="#user-content-fixed-2" id="user-content-fixed-2" name="user-content-fixed-2"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
+<h3 id="user-content-fixed-3"><a aria-hidden="true" class="anchor" href="#user-content-fixed-3" id="user-content-fixed-3" name="user-content-fixed-3"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
 <ul>
 <li>Fixed a minor memory leak in the Wine-&gt;X11 drag-and-drop implementation when
 converting Windows file paths.</li>
@@ -151,7 +173,7 @@ converting Windows file paths.</li>
 <ul>
 <li>Added support for setting up CLAP plugins.</li>
 </ul>
-<h3 id="user-content-packaging-notes-2"><a aria-hidden="true" class="anchor" href="#user-content-packaging-notes-2" id="user-content-packaging-notes-2" name="user-content-packaging-notes-2"><span aria-hidden="true" class="octicon octicon-link"></span></a>Packaging notes</h3>
+<h3 id="user-content-packaging-notes-3"><a aria-hidden="true" class="anchor" href="#user-content-packaging-notes-3" id="user-content-packaging-notes-3" name="user-content-packaging-notes-3"><span aria-hidden="true" class="octicon octicon-link"></span></a>Packaging notes</h3>
 <ul>
 <li>There are new <code>libyabridge-clap.so</code> and <code>libyabridge-chainloader-clap.so</code>
 files need to be included in the package.</li>
@@ -169,7 +191,7 @@ library, but they do use the definitions from the headers to load
 <code>libdbus-1.so.3</code> at runtime when it needs to send a desktop notification.</li>
 </ul>
 <h2 id="user-content-402---2022-06-27"><a aria-hidden="true" class="anchor" href="#user-content-402---2022-06-27" id="user-content-402---2022-06-27" name="user-content-402---2022-06-27"><span aria-hidden="true" class="octicon octicon-link"></span></a>[4.0.2] - 2022-06-27</h2>
-<h3 id="user-content-fixed-3"><a aria-hidden="true" class="anchor" href="#user-content-fixed-3" id="user-content-fixed-3" name="user-content-fixed-3"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
+<h3 id="user-content-fixed-4"><a aria-hidden="true" class="anchor" href="#user-content-fixed-4" id="user-content-fixed-4" name="user-content-fixed-4"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
 <ul>
 <li>Fixed a rare edge case where a Windows VST3 plugin would incorrectly be
 classified as a bundle-style plugin, which caused loading those plugins to
@@ -200,7 +222,7 @@ really, <em>really</em> shouldn't be doing this.</li>
 <ul>
 <li>Added a <code>system-asio</code> build option to aid distro packaging.</li>
 </ul>
-<h3 id="user-content-fixed-4"><a aria-hidden="true" class="anchor" href="#user-content-fixed-4" id="user-content-fixed-4" name="user-content-fixed-4"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
+<h3 id="user-content-fixed-5"><a aria-hidden="true" class="anchor" href="#user-content-fixed-5" id="user-content-fixed-5" name="user-content-fixed-5"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
 <ul>
 <li>Fixed recent <em>Arturia</em> VST3 plugins running into memory errors at the end of a
 plugin scan in <strong>REAPER</strong> and <strong>Ardour</strong>. These plugins would try to read data
@@ -212,7 +234,7 @@ initialized, after the data had just been deinitialized.</li>
 <li>Fixed a regression from yabridge 4.0.0 where VST3 plugins in the 'new' Windows
 VST3 bundle format, like <em>Sforzando</em>, were not set up correctly.</li>
 </ul>
-<h3 id="user-content-packaging-notes-3"><a aria-hidden="true" class="anchor" href="#user-content-packaging-notes-3" id="user-content-packaging-notes-3" name="user-content-packaging-notes-3"><span aria-hidden="true" class="octicon octicon-link"></span></a>Packaging notes</h3>
+<h3 id="user-content-packaging-notes-4"><a aria-hidden="true" class="anchor" href="#user-content-packaging-notes-4" id="user-content-packaging-notes-4" name="user-content-packaging-notes-4"><span aria-hidden="true" class="octicon octicon-link"></span></a>Packaging notes</h3>
 <ul>
 <li>The new <code>system-asio</code> build option forces Asio to be used from the standard
 include directories. Otherwise the dependency is defined as a regular Meson
@@ -288,7 +310,7 @@ dependency on Boost.Filesystem.</li>
 <li>Removed the <code>yabridge-group</code> binaries as they are now part of the
 <code>yabridge-host</code> binaries. This saves precious megabytes.</li>
 </ul>
-<h3 id="user-content-fixed-5"><a aria-hidden="true" class="anchor" href="#user-content-fixed-5" id="user-content-fixed-5" name="user-content-fixed-5"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
+<h3 id="user-content-fixed-6"><a aria-hidden="true" class="anchor" href="#user-content-fixed-6" id="user-content-fixed-6" name="user-content-fixed-6"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
 <ul>
 <li>Fixed manually changing channel counts with supported VST3 plugins in
 <strong>REAPER</strong> not working.</li>
@@ -376,7 +398,7 @@ in <code>yabridgectl status</code> has changed accordingly.</p>
 library.</p>
 </li>
 </ul>
-<h3 id="user-content-packaging-notes-4"><a aria-hidden="true" class="anchor" href="#user-content-packaging-notes-4" id="user-content-packaging-notes-4" name="user-content-packaging-notes-4"><span aria-hidden="true" class="octicon octicon-link"></span></a>Packaging notes</h3>
+<h3 id="user-content-packaging-notes-5"><a aria-hidden="true" class="anchor" href="#user-content-packaging-notes-5" id="user-content-packaging-notes-5" name="user-content-packaging-notes-5"><span aria-hidden="true" class="octicon octicon-link"></span></a>Packaging notes</h3>
 <ul>
 <li>
 <code>libyabridge-chainloader-vst2.so</code> and <code>libyabridge-chainloader-vst3.so</code> are
@@ -410,7 +432,7 @@ scheduling when spawned from audio threads. In practice this should not have
 caused any noticeable effects as these threads are sleeping all the time
 except for under very specific circumstances.</li>
 </ul>
-<h3 id="user-content-fixed-6"><a aria-hidden="true" class="anchor" href="#user-content-fixed-6" id="user-content-fixed-6" name="user-content-fixed-6"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
+<h3 id="user-content-fixed-7"><a aria-hidden="true" class="anchor" href="#user-content-fixed-7" id="user-content-fixed-7" name="user-content-fixed-7"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
 <ul>
 <li>Fixed the <strong>REAPER</strong>-specific <code>editor_force_dnd</code> option not working correctly
 when using the <code>Track -&gt; Insert virtual instrument on new track...</code> option.
@@ -458,7 +480,7 @@ handling.</li>
 repository-packaged CMake build configurations to be used for the bitsery and
 function2 dependencies.</li>
 </ul>
-<h3 id="user-content-fixed-7"><a aria-hidden="true" class="anchor" href="#user-content-fixed-7" id="user-content-fixed-7" name="user-content-fixed-7"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
+<h3 id="user-content-fixed-8"><a aria-hidden="true" class="anchor" href="#user-content-fixed-8" id="user-content-fixed-8" name="user-content-fixed-8"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
 <ul>
 <li>Fixed <em>Waves</em> V13 VST3 plugins crashing when opening the GUI. These plugins
 thought it would be a great idea to randomly dereference null pointers if the
@@ -504,7 +526,7 @@ completely in yabridge 4.0.</li>
 <li>Blacklisted symlinks and symlinked directories are now handled correctly when
 syncing.</li>
 </ul>
-<h3 id="user-content-packaging-notes-5"><a aria-hidden="true" class="anchor" href="#user-content-packaging-notes-5" id="user-content-packaging-notes-5" name="user-content-packaging-notes-5"><span aria-hidden="true" class="octicon octicon-link"></span></a>Packaging notes</h3>
+<h3 id="user-content-packaging-notes-6"><a aria-hidden="true" class="anchor" href="#user-content-packaging-notes-6" id="user-content-packaging-notes-6" name="user-content-packaging-notes-6"><span aria-hidden="true" class="octicon octicon-link"></span></a>Packaging notes</h3>
 <ul>
 <li>The tomlplusplus wrap dependency has been updated to version 3.0.1 because of
 breaking API changes in version 3.0.</li>
@@ -526,7 +548,7 @@ then you probably don't need this!</li>
 cause compilation to fail by redefining common variable names used in the
 standard library. This issue has since been fixed in Wine 6.21 and up.</li>
 </ul>
-<h3 id="user-content-fixed-8"><a aria-hidden="true" class="anchor" href="#user-content-fixed-8" id="user-content-fixed-8" name="user-content-fixed-8"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
+<h3 id="user-content-fixed-9"><a aria-hidden="true" class="anchor" href="#user-content-fixed-9" id="user-content-fixed-9" name="user-content-fixed-9"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
 <ul>
 <li>Fixed the VST3 version of <em>IK Multimedia's T-RackS 5</em> causing offline
 rendering to stall indefinitely. This could happen when exporting or bouncing
@@ -537,7 +559,7 @@ so we now prevent that from happening.</li>
 connections now get removed when those processes shut down. Previously this
 would leave behind a file in the temporary directory.</li>
 </ul>
-<h3 id="user-content-packaging-notes-6"><a aria-hidden="true" class="anchor" href="#user-content-packaging-notes-6" id="user-content-packaging-notes-6" name="user-content-packaging-notes-6"><span aria-hidden="true" class="octicon octicon-link"></span></a>Packaging notes</h3>
+<h3 id="user-content-packaging-notes-7"><a aria-hidden="true" class="anchor" href="#user-content-packaging-notes-7" id="user-content-packaging-notes-7" name="user-content-packaging-notes-7"><span aria-hidden="true" class="octicon octicon-link"></span></a>Packaging notes</h3>
 <ul>
 <li>All Meson wraps now use <code>wrap-git</code> instead of downloading tarballs from
 GitHub. Previously the bitsery and function2 wraps would use source tarballs.</li>
@@ -587,7 +609,7 @@ the <code>Usage: </code> string when invoked without any command line arguments.
 already used for VST2 SysEx events. This avoids allocations when a VST3 plugin
 sends or receives a small SysEx event.</li>
 </ul>
-<h3 id="user-content-fixed-9"><a aria-hidden="true" class="anchor" href="#user-content-fixed-9" id="user-content-fixed-9" name="user-content-fixed-9"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
+<h3 id="user-content-fixed-10"><a aria-hidden="true" class="anchor" href="#user-content-fixed-10" id="user-content-fixed-10" name="user-content-fixed-10"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
 <ul>
 <li>Worked around a <a href="https://svn.boost.org/trac10/changeset/72855" rel="nofollow">bug</a> in
 Boost.Process that would cause yabridge to crash with an
@@ -615,7 +637,7 @@ implementation now has a warmup phase to prevent this from happening.</li>
 <li>
 <code>yabridgectl rm</code> and <code>yabridgectl blacklist rm</code> now accept relative paths.</li>
 </ul>
-<h3 id="user-content-packaging-notes-7"><a aria-hidden="true" class="anchor" href="#user-content-packaging-notes-7" id="user-content-packaging-notes-7" name="user-content-packaging-notes-7"><span aria-hidden="true" class="octicon octicon-link"></span></a>Packaging notes</h3>
+<h3 id="user-content-packaging-notes-8"><a aria-hidden="true" class="anchor" href="#user-content-packaging-notes-8" id="user-content-packaging-notes-8" name="user-content-packaging-notes-8"><span aria-hidden="true" class="octicon octicon-link"></span></a>Packaging notes</h3>
 <ul>
 <li>We now target VST3 SDK version 3.7.3 with git tag <code>v3.7.3_build_20-patched</code>.</li>
 <li>Because of an
@@ -632,7 +654,7 @@ changing between octaves, and some hosts like <strong>REAPER</strong> forwards t
 directly to the plugin. Before this change this might cause crashes with
 plugins that try to handle SysEx events, like the <em>D16 Group</em> plugins.</li>
 </ul>
-<h3 id="user-content-fixed-10"><a aria-hidden="true" class="anchor" href="#user-content-fixed-10" id="user-content-fixed-10" name="user-content-fixed-10"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
+<h3 id="user-content-fixed-11"><a aria-hidden="true" class="anchor" href="#user-content-fixed-11" id="user-content-fixed-11" name="user-content-fixed-11"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
 <ul>
 <li>Fixed a regression from yabridge 3.5.1 where certain VST3 plugins wouldn't
 resize to their correct size when opening the editor. This affected
@@ -664,7 +686,7 @@ the GUI thread, which can potentially increase responsiveness and help with
 graphical issues in certain situations (although at the moment there aren't
 any known situations where the old approach caused any issues).</li>
 </ul>
-<h3 id="user-content-fixed-11"><a aria-hidden="true" class="anchor" href="#user-content-fixed-11" id="user-content-fixed-11" name="user-content-fixed-11"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
+<h3 id="user-content-fixed-12"><a aria-hidden="true" class="anchor" href="#user-content-fixed-12" id="user-content-fixed-12" name="user-content-fixed-12"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
 <ul>
 <li>Reverted the workaround for the <em>Nimble Kick</em> plugin freezing added in
 yabridge 3.5.0. This could cause VST3 plugins in <strong>Bitwig Studio</strong> and
@@ -721,7 +743,7 @@ hosts under very specific circumstances.</li>
 drag-and-drop support. Before this yabridge assumed every application
 supported version 5 from 2002, but JUCE based hosts only support XDND version 3.</li>
 </ul>
-<h3 id="user-content-fixed-12"><a aria-hidden="true" class="anchor" href="#user-content-fixed-12" id="user-content-fixed-12" name="user-content-fixed-12"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
+<h3 id="user-content-fixed-13"><a aria-hidden="true" class="anchor" href="#user-content-fixed-13" id="user-content-fixed-13" name="user-content-fixed-13"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
 <ul>
 <li>Fixed crashes or freezes when a plugin uses the Windows drag-and-drop system
 to transfer arbitrary, vendor specific data. This prevents <strong>Reaktor</strong> from
@@ -817,7 +839,7 @@ allocations under certain circumstances. This is related to the similar issue
 that was fixed in yabridge 3.3.0. A fix for this issue has also been
 upstreamed to the library.</li>
 </ul>
-<h3 id="user-content-fixed-13"><a aria-hidden="true" class="anchor" href="#user-content-fixed-13" id="user-content-fixed-13" name="user-content-fixed-13"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
+<h3 id="user-content-fixed-14"><a aria-hidden="true" class="anchor" href="#user-content-fixed-14" id="user-content-fixed-14" name="user-content-fixed-14"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
 <ul>
 <li>Fixed mouse cursors disappearing when interacting with some plugin GUIs. This
 often happened with <em>JUCE</em> based plugins, such as Sonic Academy's <em>Kick 2</em> and
@@ -904,7 +926,7 @@ custom <code>WINELOADER</code> script that modifies Wine's output.</li>
 <li>Added thread names to all worker threads created by yabridge. This makes it
 easier to debug and profile yabridge.</li>
 </ul>
-<h3 id="user-content-fixed-14"><a aria-hidden="true" class="anchor" href="#user-content-fixed-14" id="user-content-fixed-14" name="user-content-fixed-14"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
+<h3 id="user-content-fixed-15"><a aria-hidden="true" class="anchor" href="#user-content-fixed-15" id="user-content-fixed-15" name="user-content-fixed-15"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
 <ul>
 <li>Fixed the <code>IPlugView::canResize()</code> cache added in yabridge 3.2.0 sometimes not
 being initialized properly, preventing host-driven resizes in certain
@@ -984,7 +1006,7 @@ skipping some unnecessary checks.</li>
 <li>Log messages about VST3 query interfaces are now only printed when
 <code>YABRIDGE_DEBUG_LEVEL</code> is set to 2 or higher, up from 1.</li>
 </ul>
-<h3 id="user-content-fixed-15"><a aria-hidden="true" class="anchor" href="#user-content-fixed-15" id="user-content-fixed-15" name="user-content-fixed-15"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
+<h3 id="user-content-fixed-16"><a aria-hidden="true" class="anchor" href="#user-content-fixed-16" id="user-content-fixed-16" name="user-content-fixed-16"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
 <ul>
 <li>Fixed a longstanding thread safety issue when hosting a lot of VST2 plugins in
 a plugin group. This could cause plugins to crash or freeze when initializing
@@ -1091,7 +1113,7 @@ obsolete.</li>
 warning about potential crashes due to Ardour not supporting multiple input
 and output busses. These crashes have been resolved since yabridge 3.1.0.</li>
 </ul>
-<h3 id="user-content-fixed-16"><a aria-hidden="true" class="anchor" href="#user-content-fixed-16" id="user-content-fixed-16" name="user-content-fixed-16"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
+<h3 id="user-content-fixed-17"><a aria-hidden="true" class="anchor" href="#user-content-fixed-17" id="user-content-fixed-17" name="user-content-fixed-17"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
 <ul>
 <li>Fixed rare X11 errors that could occur when closing a plugin's editor. In
 certain circumstances, closing a plugin editor would trigger an X11 error and
@@ -1164,7 +1186,7 @@ installed. This likely won't be necessary, but because of the way VST3 bundles
 work there's no clean way to separate these. So when both are installed, the
 64-bit version gets used by default.</li>
 </ul>
-<h3 id="user-content-fixed-17"><a aria-hidden="true" class="anchor" href="#user-content-fixed-17" id="user-content-fixed-17" name="user-content-fixed-17"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
+<h3 id="user-content-fixed-18"><a aria-hidden="true" class="anchor" href="#user-content-fixed-18" id="user-content-fixed-18" name="user-content-fixed-18"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
 <ul>
 <li>Worked around a regression in Wine 6.5 that would prevent yabridge from
 shutting down (<a href="https://bugs.winehq.org/show_bug.cgi?id=50869" rel="nofollow">wine bug
@@ -1186,7 +1208,7 @@ most likely won't ever have to use this, but this lets you skip over files and
 directories in yabridgectl's indexing process.</li>
 <li>Minor spelling fixes.</li>
 </ul>
-<h3 id="user-content-packaging-notes-8"><a aria-hidden="true" class="anchor" href="#user-content-packaging-notes-8" id="user-content-packaging-notes-8" name="user-content-packaging-notes-8"><span aria-hidden="true" class="octicon octicon-link"></span></a>Packaging notes</h3>
+<h3 id="user-content-packaging-notes-9"><a aria-hidden="true" class="anchor" href="#user-content-packaging-notes-9" id="user-content-packaging-notes-9" name="user-content-packaging-notes-9"><span aria-hidden="true" class="octicon octicon-link"></span></a>Packaging notes</h3>
 <ul>
 <li>The Meson wrap dependencies for <code>bitsery</code>, <code>function2</code> and <code>tomlplusplus</code> are
 now defined using <code>dependency()</code> with a subproject fallback instead of using
@@ -1197,7 +1219,7 @@ now defined using <code>dependency()</code> with a subproject fallback instead o
 a commit hash.</li>
 </ul>
 <h2 id="user-content-302---2021-03-07"><a aria-hidden="true" class="anchor" href="#user-content-302---2021-03-07" id="user-content-302---2021-03-07" name="user-content-302---2021-03-07"><span aria-hidden="true" class="octicon octicon-link"></span></a>[3.0.2] - 2021-03-07</h2>
-<h3 id="user-content-fixed-18"><a aria-hidden="true" class="anchor" href="#user-content-fixed-18" id="user-content-fixed-18" name="user-content-fixed-18"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
+<h3 id="user-content-fixed-19"><a aria-hidden="true" class="anchor" href="#user-content-fixed-19" id="user-content-fixed-19" name="user-content-fixed-19"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
 <ul>
 <li>Fix bus information queries being performed for the wrong bus index. This
 fixes VST3 sidechaining in <em>Renoise</em>, and prevents a number of VST3 plugins
@@ -1213,7 +1235,7 @@ Since we do not need the affecting functionality, yabridge now includes a
 small workaround to make sure that the affected code never gets compiled. This
 has been fixed for Wine 6.3.</li>
 </ul>
-<h3 id="user-content-fixed-19"><a aria-hidden="true" class="anchor" href="#user-content-fixed-19" id="user-content-fixed-19" name="user-content-fixed-19"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
+<h3 id="user-content-fixed-20"><a aria-hidden="true" class="anchor" href="#user-content-fixed-20" id="user-content-fixed-20" name="user-content-fixed-20"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
 <ul>
 <li>Added support for a new ReaSurround related VST2.4 extension that <strong>REAPER</strong>
 recently started using. This would otherwise cause certain plugins to crash
@@ -1364,7 +1386,7 @@ for the current position in the song, yabridge will now also print the current
 tempo to help debugging host bugs.</p>
 </li>
 </ul>
-<h3 id="user-content-fixed-20"><a aria-hidden="true" class="anchor" href="#user-content-fixed-20" id="user-content-fixed-20" name="user-content-fixed-20"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
+<h3 id="user-content-fixed-21"><a aria-hidden="true" class="anchor" href="#user-content-fixed-21" id="user-content-fixed-21" name="user-content-fixed-21"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
 <ul>
 <li>VST2 plugin editor resizing in <strong>REAPER</strong> would not cause the FX window to be
 resized like it would in every other host. This has now been fixed.</li>
@@ -1399,7 +1421,7 @@ disable post-installation setup checks. You can still directly pass the
 a single invocation.</li>
 </ul>
 <h2 id="user-content-221---2020-12-12"><a aria-hidden="true" class="anchor" href="#user-content-221---2020-12-12" id="user-content-221---2020-12-12" name="user-content-221---2020-12-12"><span aria-hidden="true" class="octicon octicon-link"></span></a>[2.2.1] - 2020-12-12</h2>
-<h3 id="user-content-fixed-21"><a aria-hidden="true" class="anchor" href="#user-content-fixed-21" id="user-content-fixed-21" name="user-content-fixed-21"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
+<h3 id="user-content-fixed-22"><a aria-hidden="true" class="anchor" href="#user-content-fixed-22" id="user-content-fixed-22" name="user-content-fixed-22"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
 <ul>
 <li>Fixed some plugins, notably the <em>Spitfire Audio</em> plugins, from causing a
 deadlock when using plugin groups in <em>REAPER</em>. Even though this did not seem
@@ -1428,7 +1450,7 @@ be logged. This makes recognizing misbheaving plugins a bit easier.</li>
 <li>Symbols in all <code>libyabridge.so</code> and all Winelib <code>.so</code> files are now hidden by
 default.</li>
 </ul>
-<h3 id="user-content-fixed-22"><a aria-hidden="true" class="anchor" href="#user-content-fixed-22" id="user-content-fixed-22" name="user-content-fixed-22"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
+<h3 id="user-content-fixed-23"><a aria-hidden="true" class="anchor" href="#user-content-fixed-23" id="user-content-fixed-23" name="user-content-fixed-23"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
 <ul>
 <li>Fixed an issue where in certain situations Wine processes were left running
 after the host got forcefully terminated before it got a chance to tell the
@@ -1461,20 +1483,20 @@ advantages over the copy-based method anymore other than the fact that you
 can't forget to rerun <code>yabridgectl sync</code> after an upgrade, so most references
 to it have been removed from the readme.</li>
 </ul>
-<h3 id="user-content-fixed-23"><a aria-hidden="true" class="anchor" href="#user-content-fixed-23" id="user-content-fixed-23" name="user-content-fixed-23"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
+<h3 id="user-content-fixed-24"><a aria-hidden="true" class="anchor" href="#user-content-fixed-24" id="user-content-fixed-24" name="user-content-fixed-24"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
 <ul>
 <li>Fixed an issue where <em>Renoise</em> would show an error message when trying to load
 a plugin in the mixer.</li>
 </ul>
 <h2 id="user-content-202---2020-11-14"><a aria-hidden="true" class="anchor" href="#user-content-202---2020-11-14" id="user-content-202---2020-11-14" name="user-content-202---2020-11-14"><span aria-hidden="true" class="octicon octicon-link"></span></a>[2.0.2] - 2020-11-14</h2>
-<h3 id="user-content-fixed-24"><a aria-hidden="true" class="anchor" href="#user-content-fixed-24" id="user-content-fixed-24" name="user-content-fixed-24"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
+<h3 id="user-content-fixed-25"><a aria-hidden="true" class="anchor" href="#user-content-fixed-25" id="user-content-fixed-25" name="user-content-fixed-25"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
 <ul>
 <li>Added a workaround for a bug in <em>Ardour 6.3</em> which would cause several plugins
 including MT Power Drumkit to crash when opening the editor.</li>
 <li>Fixed linking error in debug build related to the parallel STL.</li>
 </ul>
 <h2 id="user-content-201---2020-11-08"><a aria-hidden="true" class="anchor" href="#user-content-201---2020-11-08" id="user-content-201---2020-11-08" name="user-content-201---2020-11-08"><span aria-hidden="true" class="octicon octicon-link"></span></a>[2.0.1] - 2020-11-08</h2>
-<h3 id="user-content-fixed-25"><a aria-hidden="true" class="anchor" href="#user-content-fixed-25" id="user-content-fixed-25" name="user-content-fixed-25"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
+<h3 id="user-content-fixed-26"><a aria-hidden="true" class="anchor" href="#user-content-fixed-26" id="user-content-fixed-26" name="user-content-fixed-26"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
 <ul>
 <li>Fixed a regression where <code>yabridge-host.exe</code> would not exit on its own after
 the host crashes or gets terminated without being able to properly close all
@@ -1530,7 +1552,7 @@ on most systems) instead of <code>/tmp</code> to avoid polluting <code>/tmp</cod
 options have been removed. Please use <code>with-bitbridge</code> and <code>with-winedbg</code>
 instead.</li>
 </ul>
-<h3 id="user-content-fixed-26"><a aria-hidden="true" class="anchor" href="#user-content-fixed-26" id="user-content-fixed-26" name="user-content-fixed-26"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
+<h3 id="user-content-fixed-27"><a aria-hidden="true" class="anchor" href="#user-content-fixed-27" id="user-content-fixed-27" name="user-content-fixed-27"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
 <ul>
 <li>Fixed a very long standing issue with plugins groups where unloading a plugin
 could cause a crash. Now you can host over a hundred plugins in a single
@@ -1545,7 +1567,7 @@ I'm aware no VST hosts made in the last few decades even use this, but it just
 feels wrong to have an incorrect implementation as part of yabridge.</li>
 </ul>
 <h2 id="user-content-171---2020-10-23"><a aria-hidden="true" class="anchor" href="#user-content-171---2020-10-23" id="user-content-171---2020-10-23" name="user-content-171---2020-10-23"><span aria-hidden="true" class="octicon octicon-link"></span></a>[1.7.1] - 2020-10-23</h2>
-<h3 id="user-content-fixed-27"><a aria-hidden="true" class="anchor" href="#user-content-fixed-27" id="user-content-fixed-27" name="user-content-fixed-27"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
+<h3 id="user-content-fixed-28"><a aria-hidden="true" class="anchor" href="#user-content-fixed-28" id="user-content-fixed-28" name="user-content-fixed-28"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
 <ul>
 <li>Fixed a regression where the <code>editor_double_embed</code> option would cause X11
 errors and crash yabridge.</li>
@@ -1596,7 +1618,7 @@ message now also contains a suggestion to enable the
 <code>hack_reaper_update_display</code> option when it is not already enabled.</p>
 </li>
 </ul>
-<h3 id="user-content-fixed-28"><a aria-hidden="true" class="anchor" href="#user-content-fixed-28" id="user-content-fixed-28" name="user-content-fixed-28"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
+<h3 id="user-content-fixed-29"><a aria-hidden="true" class="anchor" href="#user-content-fixed-29" id="user-content-fixed-29" name="user-content-fixed-29"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
 <ul>
 <li>Added a workaround for reparenting issues with the plugin editor GUI on a
 <a href="https://github.com/robbert-vdh/yabridge/issues/40">specific i3 setup</a>.</li>
@@ -1607,7 +1629,7 @@ message now also contains a suggestion to enable the
 rewritten in an effort to make it easier to comprehend.</li>
 </ul>
 <h2 id="user-content-161---2020-09-28"><a aria-hidden="true" class="anchor" href="#user-content-161---2020-09-28" id="user-content-161---2020-09-28" name="user-content-161---2020-09-28"><span aria-hidden="true" class="octicon octicon-link"></span></a>[1.6.1] - 2020-09-28</h2>
-<h3 id="user-content-fixed-29"><a aria-hidden="true" class="anchor" href="#user-content-fixed-29" id="user-content-fixed-29" name="user-content-fixed-29"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
+<h3 id="user-content-fixed-30"><a aria-hidden="true" class="anchor" href="#user-content-fixed-30" id="user-content-fixed-30" name="user-content-fixed-30"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
 <ul>
 <li>Fixed a potential crash that could happen if the host would unload a plugin
 immediately after its initialization. This issue affected the plugin scanning
@@ -1633,7 +1655,7 @@ recommended.</li>
 used, but some plugins running under REAPER make use of this. Without this
 those plugins would cause REAPER's audio engine to crash.</li>
 </ul>
-<h3 id="user-content-fixed-30"><a aria-hidden="true" class="anchor" href="#user-content-fixed-30" id="user-content-fixed-30" name="user-content-fixed-30"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
+<h3 id="user-content-fixed-31"><a aria-hidden="true" class="anchor" href="#user-content-fixed-31" id="user-content-fixed-31" name="user-content-fixed-31"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
 <ul>
 <li>Increased the limit for the maximum number of audio channels. This could cause
 issues in Renoise when using a lot of output channels.</li>
@@ -1653,7 +1675,7 @@ contains instructions on how to enable this.</li>
 <ul>
 <li>Don't print calls to <code>effIdle()</code> when <code>YABRIDGE_DEBUG_LEVEL</code> is set to 1.</li>
 </ul>
-<h3 id="user-content-fixed-31"><a aria-hidden="true" class="anchor" href="#user-content-fixed-31" id="user-content-fixed-31" name="user-content-fixed-31"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
+<h3 id="user-content-fixed-32"><a aria-hidden="true" class="anchor" href="#user-content-fixed-32" id="user-content-fixed-32" name="user-content-fixed-32"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
 <ul>
 <li>Fix Waves plugins from freezing the plugin process by preventing them from
 causing an infinite message loop.</li>
@@ -1690,7 +1712,7 @@ yabridge is running with realtime priority by looking for the <code>realtime:</c
 in the initialization message. I have not found any downsides to this approach
 in my testing, but please let me know if this does end up causing any issues.</li>
 </ul>
-<h3 id="user-content-fixed-32"><a aria-hidden="true" class="anchor" href="#user-content-fixed-32" id="user-content-fixed-32" name="user-content-fixed-32"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
+<h3 id="user-content-fixed-33"><a aria-hidden="true" class="anchor" href="#user-content-fixed-33" id="user-content-fixed-33" name="user-content-fixed-33"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
 <ul>
 <li>Fixed rare plugin location detection issue on Debian based distros related to
 the plugin and host detection fix in yabridge 1.2.0.</li>
@@ -1736,7 +1758,7 @@ continue to work until they are removed in yabridge 2.0.0.</li>
 <code>with-bitbridge</code> and <code>with-winedbg</code> for consistency's sake. The old options
 will be marked as deprecated in the next minor release.</li>
 </ul>
-<h3 id="user-content-fixed-33"><a aria-hidden="true" class="anchor" href="#user-content-fixed-33" id="user-content-fixed-33" name="user-content-fixed-33"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
+<h3 id="user-content-fixed-34"><a aria-hidden="true" class="anchor" href="#user-content-fixed-34" id="user-content-fixed-34" name="user-content-fixed-34"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
 <ul>
 <li>Fixed memory error that would cause crashing on playback with some buffer
 sizes in Mixbus6.</li>
@@ -1771,7 +1793,7 @@ handling logic for individually hosted plugins and plugin groups. It should
 not have any noticeable effects, but please let me know if this does cause
 unwanted behavior.</li>
 </ul>
-<h3 id="user-content-fixed-34"><a aria-hidden="true" class="anchor" href="#user-content-fixed-34" id="user-content-fixed-34" name="user-content-fixed-34"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
+<h3 id="user-content-fixed-35"><a aria-hidden="true" class="anchor" href="#user-content-fixed-35" id="user-content-fixed-35" name="user-content-fixed-35"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
 <ul>
 <li>Steal keyboard focus when clicking on the plugin editor window to account for
 the new keyboard focus behavior in <em>Bitwig Studio 3.2</em>.</li>
@@ -1780,12 +1802,12 @@ unexpectedly.</li>
 <li>Made the plugin and host detection slightly more robust.</li>
 </ul>
 <h2 id="user-content-114---2020-05-12"><a aria-hidden="true" class="anchor" href="#user-content-114---2020-05-12" id="user-content-114---2020-05-12" name="user-content-114---2020-05-12"><span aria-hidden="true" class="octicon octicon-link"></span></a>[1.1.4] - 2020-05-12</h2>
-<h3 id="user-content-fixed-35"><a aria-hidden="true" class="anchor" href="#user-content-fixed-35" id="user-content-fixed-35" name="user-content-fixed-35"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
+<h3 id="user-content-fixed-36"><a aria-hidden="true" class="anchor" href="#user-content-fixed-36" id="user-content-fixed-36" name="user-content-fixed-36"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
 <ul>
 <li>Fixed a static linking issue with the 32-bit build for Ubuntu 18.04.</li>
 </ul>
 <h2 id="user-content-113---2020-05-12"><a aria-hidden="true" class="anchor" href="#user-content-113---2020-05-12" id="user-content-113---2020-05-12" name="user-content-113---2020-05-12"><span aria-hidden="true" class="octicon octicon-link"></span></a>[1.1.3] - 2020-05-12</h2>
-<h3 id="user-content-fixed-36"><a aria-hidden="true" class="anchor" href="#user-content-fixed-36" id="user-content-fixed-36" name="user-content-fixed-36"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
+<h3 id="user-content-fixed-37"><a aria-hidden="true" class="anchor" href="#user-content-fixed-37" id="user-content-fixed-37" name="user-content-fixed-37"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
 <ul>
 <li>Added a workaround for the compilation issues under Wine 5.7 and above as
 caused by <a href="https://bugs.winehq.org/show_bug.cgi?id=49138" rel="nofollow">Wine bug #49138</a>.</li>
@@ -1798,7 +1820,7 @@ Superior Drummer 3 and the Roland Cloud synths in Bitwig Studio.</li>
 <li>Fixed potential issue with plugins not returning their editor size.</li>
 </ul>
 <h2 id="user-content-112---2020-05-09"><a aria-hidden="true" class="anchor" href="#user-content-112---2020-05-09" id="user-content-112---2020-05-09" name="user-content-112---2020-05-09"><span aria-hidden="true" class="octicon octicon-link"></span></a>[1.1.2] - 2020-05-09</h2>
-<h3 id="user-content-fixed-37"><a aria-hidden="true" class="anchor" href="#user-content-fixed-37" id="user-content-fixed-37" name="user-content-fixed-37"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
+<h3 id="user-content-fixed-38"><a aria-hidden="true" class="anchor" href="#user-content-fixed-38" id="user-content-fixed-38" name="user-content-fixed-38"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
 <ul>
 <li>Fixed an issue where plugin removal could cause Ardour and Mixbus to crash.</li>
 </ul>
@@ -1809,7 +1831,7 @@ Superior Drummer 3 and the Roland Cloud synths in Bitwig Studio.</li>
 that support individually sandboxed plugins.</li>
 <li>Respect <code>YABRIDGE_DEBUG_FILE</code> when printing initialization errors.</li>
 </ul>
-<h3 id="user-content-fixed-38"><a aria-hidden="true" class="anchor" href="#user-content-fixed-38" id="user-content-fixed-38" name="user-content-fixed-38"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
+<h3 id="user-content-fixed-39"><a aria-hidden="true" class="anchor" href="#user-content-fixed-39" id="user-content-fixed-39" name="user-content-fixed-39"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
 <ul>
 <li>Stop waiting for the Wine VST host process on startup if the process has
 crashed or if Wine was not able to start.</li>
@@ -1839,7 +1861,7 @@ rather than the loaded <code>.so</code> file.</li>
 <li>Yabridge will now print the used version of Wine during startup. This can be
 useful for diagnosing startup problems.</li>
 </ul>
-<h3 id="user-content-fixed-39"><a aria-hidden="true" class="anchor" href="#user-content-fixed-39" id="user-content-fixed-39" name="user-content-fixed-39"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
+<h3 id="user-content-fixed-40"><a aria-hidden="true" class="anchor" href="#user-content-fixed-40" id="user-content-fixed-40" name="user-content-fixed-40"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed</h3>
 <ul>
 <li>Fixed plugins failing to load on certain versions of <em>Ubuntu</em> because of
 paths starting with two forward slashes.</li>
