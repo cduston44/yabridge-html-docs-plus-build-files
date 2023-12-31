@@ -1,36 +1,60 @@
+//! Benchmarks for rustix.
+//!
+//! To enable these benchmarks, add `--cfg=criterion` to RUSTFLAGS and enable
+//! the "fs", "time", and "process" cargo features.
+//!
+//! ```sh
+//! RUSTFLAGS=--cfg=criterion cargo bench --features=fs,time,process
+//! ```
+
 #[cfg(any(
+    not(criterion),
+    not(feature = "fs"),
+    not(feature = "process"),
+    not(feature = "time"),
     windows,
     target_os = "emscripten",
     target_os = "redox",
-    target_os = "wasi"
+    target_os = "wasi",
 ))]
 fn main() {
-    unimplemented!()
+    unimplemented!(
+        "Add --cfg=criterion to RUSTFLAGS and enable the \"fs\", \"time\", and \"process\" cargo \
+         features."
+    )
 }
 
 #[cfg(not(any(
+    not(criterion),
+    not(feature = "fs"),
+    not(feature = "process"),
+    not(feature = "time"),
     windows,
     target_os = "emscripten",
     target_os = "redox",
-    target_os = "wasi"
+    target_os = "wasi",
 )))]
 use criterion::{criterion_group, criterion_main};
 
 #[cfg(not(any(
+    not(criterion),
+    not(feature = "fs"),
+    not(feature = "process"),
+    not(feature = "time"),
     windows,
     target_os = "emscripten",
     target_os = "redox",
-    target_os = "wasi"
+    target_os = "wasi",
 )))]
 mod suite {
     use criterion::Criterion;
 
     pub(super) fn simple_statat(c: &mut Criterion) {
-        use rustix::fs::{cwd, statat, AtFlags};
+        use rustix::fs::{statat, AtFlags, CWD};
 
         c.bench_function("simple statat", |b| {
             b.iter(|| {
-                statat(&cwd(), "/", AtFlags::empty()).unwrap();
+                statat(CWD, "/", AtFlags::empty()).unwrap();
             })
         });
     }
@@ -62,7 +86,7 @@ mod suite {
                     assert_eq!(
                         libc::fstatat(
                             libc::AT_FDCWD,
-                            rustix::zstr!("/").as_ptr() as _,
+                            rustix::cstr!("/").as_ptr() as _,
                             s.as_mut_ptr(),
                             0
                         ),
@@ -74,11 +98,11 @@ mod suite {
     }
 
     pub(super) fn simple_statat_cstr(c: &mut Criterion) {
-        use rustix::fs::{cwd, statat, AtFlags};
+        use rustix::fs::{statat, AtFlags, CWD};
 
         c.bench_function("simple statat cstr", |b| {
             b.iter(|| {
-                statat(&cwd(), rustix::zstr!("/"), AtFlags::empty()).unwrap();
+                statat(CWD, rustix::cstr!("/"), AtFlags::empty()).unwrap();
             })
         });
     }
@@ -132,10 +156,14 @@ mod suite {
 }
 
 #[cfg(not(any(
+    not(criterion),
+    not(feature = "fs"),
+    not(feature = "process"),
+    not(feature = "time"),
     windows,
     target_os = "emscripten",
     target_os = "redox",
-    target_os = "wasi"
+    target_os = "wasi",
 )))]
 criterion_group!(
     benches,
@@ -149,9 +177,13 @@ criterion_group!(
     suite::simple_getpid_libc
 );
 #[cfg(not(any(
+    not(criterion),
+    not(feature = "fs"),
+    not(feature = "process"),
+    not(feature = "time"),
     windows,
     target_os = "emscripten",
     target_os = "redox",
-    target_os = "wasi"
+    target_os = "wasi",
 )))]
 criterion_main!(benches);

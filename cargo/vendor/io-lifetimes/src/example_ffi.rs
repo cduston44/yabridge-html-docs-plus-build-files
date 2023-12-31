@@ -1,24 +1,32 @@
 //! This is just a sample of what FFI using this crate can look like.
 
-#![cfg_attr(not(rustc_attrs), allow(unused_imports))]
+#![cfg_attr(not(io_safety_is_in_std), allow(unused_imports))]
 #![allow(missing_docs)]
 
-#[cfg(any(unix, target_os = "wasi"))]
+#[cfg(any(unix, target_os = "wasi", target_os = "hermit"))]
 use crate::{BorrowedFd, OwnedFd};
 #[cfg(windows)]
-use crate::{BorrowedHandle, HandleOrInvalid, OwnedHandle};
+use crate::{BorrowedHandle, HandleOrInvalid};
 
-#[cfg(any(unix, target_os = "wasi"))]
+#[cfg(any(unix, target_os = "wasi", target_os = "hermit"))]
 use libc::{c_char, c_int, c_void, size_t, ssize_t};
 #[cfg(windows)]
-use winapi::{
-    shared::minwindef::{BOOL, DWORD, LPCVOID, LPDWORD, LPVOID},
-    shared::ntdef::{HANDLE, LPCWSTR},
-    um::minwinbase::{LPOVERLAPPED, LPSECURITY_ATTRIBUTES},
+use {
+    core::ffi::c_void,
+    windows_sys::core::PCWSTR,
+    windows_sys::Win32::Foundation::BOOL,
+    windows_sys::Win32::Security::SECURITY_ATTRIBUTES,
+    windows_sys::Win32::Storage::FileSystem::{
+        FILE_CREATION_DISPOSITION, FILE_FLAGS_AND_ATTRIBUTES, FILE_SHARE_MODE,
+    },
+    windows_sys::Win32::System::IO::OVERLAPPED,
 };
 
 // Declare a few FFI functions ourselves, to show off the FFI ergonomics.
-#[cfg(all(rustc_attrs, any(unix, target_os = "wasi")))]
+#[cfg(all(
+    io_safety_is_in_std,
+    any(unix, target_os = "wasi", target_os = "hermit")
+))]
 extern "C" {
     pub fn open(pathname: *const c_char, flags: c_int, ...) -> Option<OwnedFd>;
 }
@@ -30,38 +38,41 @@ extern "C" {
 #[cfg(any(unix, target_os = "wasi"))]
 pub use libc::{O_CLOEXEC, O_CREAT, O_RDONLY, O_RDWR, O_TRUNC, O_WRONLY};
 
-/// The Windows analogs of the above. Note the use of [`HandleOrInvalid`] as
-/// the return type for `CreateFileW`, since that function is defined to return
-/// [`INVALID_HANDLE_VALUE`] on error instead of null.
+// The Windows analogs of the above. Note the use of [`HandleOrInvalid`] as
+// the return type for `CreateFileW`, since that function is defined to return
+// [`INVALID_HANDLE_VALUE`] on error instead of null.
 #[cfg(windows)]
 extern "system" {
     pub fn CreateFileW(
-        lpFileName: LPCWSTR,
-        dwDesiredAccess: DWORD,
-        dwShareMode: DWORD,
-        lpSecurityAttributes: LPSECURITY_ATTRIBUTES,
-        dwCreationDisposition: DWORD,
-        dwFlagsAndAttributes: DWORD,
-        hTemplateFile: HANDLE,
+        lpfilename: PCWSTR,
+        dwdesiredaccess: u32,
+        dwsharemode: FILE_SHARE_MODE,
+        lpsecurityattributes: *const SECURITY_ATTRIBUTES,
+        dwcreationdisposition: FILE_CREATION_DISPOSITION,
+        dwflagsandattributes: FILE_FLAGS_AND_ATTRIBUTES,
+        htemplatefile: HANDLE,
     ) -> HandleOrInvalid;
     pub fn ReadFile(
-        hFile: BorrowedHandle<'_>,
-        lpBuffer: LPVOID,
-        nNumberOfBytesToRead: DWORD,
-        lpNumberOfBytesRead: LPDWORD,
-        lpOverlapped: LPOVERLAPPED,
+        hfile: BorrowedHandle<'_>,
+        lpbuffer: *mut c_void,
+        nnumberofbytestoread: u32,
+        lpnumberofbytesread: *mut u32,
+        lpoverlapped: *mut OVERLAPPED,
     ) -> BOOL;
     pub fn WriteFile(
-        hFile: BorrowedHandle<'_>,
-        lpBuffer: LPCVOID,
-        nNumberOfBytesToWrite: DWORD,
-        lpNumberOfBytesWritten: LPDWORD,
-        lpOverlapped: LPOVERLAPPED,
+        hfile: BorrowedHandle<'_>,
+        lpbuffer: *const c_void,
+        nnumberofbytestowrite: u32,
+        lpnumberofbyteswritten: *mut u32,
+        lpoverlapped: *mut OVERLAPPED,
     ) -> BOOL;
 }
+
 #[cfg(windows)]
-pub use winapi::{
-    shared::minwindef::{FALSE, TRUE},
-    um::fileapi::{CREATE_ALWAYS, CREATE_NEW, OPEN_EXISTING},
-    um::winnt::{FILE_ATTRIBUTE_NORMAL, FILE_GENERIC_READ, FILE_GENERIC_WRITE},
+pub use {
+    windows_sys::Win32::Foundation::HANDLE,
+    windows_sys::Win32::Storage::FileSystem::{
+        CREATE_ALWAYS, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, FILE_GENERIC_READ, FILE_GENERIC_WRITE,
+        OPEN_EXISTING,
+    },
 };

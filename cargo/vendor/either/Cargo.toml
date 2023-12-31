@@ -11,15 +11,16 @@
 # will likely look very different (and much more reasonable)
 
 [package]
+edition = "2018"
 name = "either"
-version = "1.6.1"
+version = "1.9.0"
 authors = ["bluss"]
 description = "The enum `Either` with variants `Left` and `Right` is a general purpose sum type with two cases.\n"
 documentation = "https://docs.rs/either/1/"
 readme = "README-crates.io.md"
 keywords = ["data-structure", "no_std"]
 categories = ["data-structures", "no-std"]
-license = "MIT/Apache-2.0"
+license = "MIT OR Apache-2.0"
 repository = "https://github.com/bluss/either"
 [package.metadata.docs.rs]
 features = ["serde"]

@@ -13,11 +13,11 @@
 <div class="file" id="user-content-article-README-yabridgectl">
 <div class="Box-body readme blob js-code-block-container p-5 p-xl-6" id="user-content-file-docker-image-pull-md-readme" style="margin-left: 40px; margin-right: 40px; margin-top: 20px; margin-bottom: 20px">
 <article class="markdown-body entry-content container-lg" itemprop="text">
-<h1 id="user-content-yabridgectl"><a aria-hidden="true" class="anchor" href="#user-content-yabridgectl" id="user-content-yabridgectl" name="user-content-yabridgectl"><span aria-hidden="true" class="octicon octicon-link"></span></a>yabridgectl</h1>
+<h1 id="user-content-yabridgectl"><a aria-hidden="true" class="anchor" href="#user-content-yabridgectl" id="user-content-yabridgectl" name="user-content-yabridgectl" tabindex="-1"><span aria-hidden="true" class="octicon octicon-link"></span></a>yabridgectl</h1>
 <p>A small, optional utility to help set up and update
 <a href="https://github.com/robbert-vdh/yabridge">yabridge</a> for several directories at
 once.</p>
-<h2 id="user-content-usage"><a aria-hidden="true" class="anchor" href="#user-content-usage" id="user-content-usage" name="user-content-usage"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h2>
+<h2 id="user-content-usage"><a aria-hidden="true" class="anchor" href="#user-content-usage" id="user-content-usage" name="user-content-usage" tabindex="-1"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h2>
 <p>Yabridgectl can be downloaded from the <a href="https://github.com/robbert-vdh/yabridge/releases">releases
 page</a> on GitHub and can run
 from anywhere. All of the information below can also be found through
@@ -26,14 +26,14 @@ from anywhere. All of the information below can also be found through
 than the things listed in yabridge's <a href="https://github.com/robbert-vdh/yabridge#usage">main
 readme</a>. All of the other options
 mentioned here are only useful during development.</p>
-<h3 id="user-content-yabridge-path"><a aria-hidden="true" class="anchor" href="#user-content-yabridge-path" id="user-content-yabridge-path" name="user-content-yabridge-path"><span aria-hidden="true" class="octicon octicon-link"></span></a>Yabridge path</h3>
+<h3 id="user-content-yabridge-path"><a aria-hidden="true" class="anchor" href="#user-content-yabridge-path" id="user-content-yabridge-path" name="user-content-yabridge-path" tabindex="-1"><span aria-hidden="true" class="octicon octicon-link"></span></a>Yabridge path</h3>
 <p>Yabridgectl will need to know where it can find yabridge's files. By default it
 will search for it in both <code>~/.local/share/yabridge</code> (the recommended
 installation directory when using the prebuilt binaries), in <code>/usr/lib</code> and in
 <code>/usr/local/lib</code>. You can use the command below to override this behaviour and
 to use a custom installation directory instead.</p>
 <div class="highlight highlight-source-shell"><pre>yabridgectl <span class="pl-c1">set</span> --path=<span class="pl-k">&lt;</span>path/to/directory/containing/yabridge/files<span class="pl-k">&gt;</span></pre></div>
-<h3 id="user-content-managing-directories"><a aria-hidden="true" class="anchor" href="#user-content-managing-directories" id="user-content-managing-directories" name="user-content-managing-directories"><span aria-hidden="true" class="octicon octicon-link"></span></a>Managing directories</h3>
+<h3 id="user-content-managing-directories"><a aria-hidden="true" class="anchor" href="#user-content-managing-directories" id="user-content-managing-directories" name="user-content-managing-directories" tabindex="-1"><span aria-hidden="true" class="octicon octicon-link"></span></a>Managing directories</h3>
 <p>Yabridgectl can manage multiple Windows plugin install locations for you.
 Whenever you run <code>yabridgectl sync</code> it will search these directories for VST2
 plugins and VST3 modules. To add, remove and list directories, you can use the
@@ -54,7 +54,7 @@ yabridgectl status
 <span class="pl-c"><span class="pl-c">#</span> Show the options for managing yabridge's indexing blacklist. It's highly</span>
 <span class="pl-c"><span class="pl-c">#</span> unlikely that you'll ever need to use this.</span>
 yabridgectl blacklist</pre></div>
-<h3 id="user-content-installing-and-updating"><a aria-hidden="true" class="anchor" href="#user-content-installing-and-updating" id="user-content-installing-and-updating" name="user-content-installing-and-updating"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installing and updating</h3>
+<h3 id="user-content-installing-and-updating"><a aria-hidden="true" class="anchor" href="#user-content-installing-and-updating" id="user-content-installing-and-updating" name="user-content-installing-and-updating" tabindex="-1"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installing and updating</h3>
 <p>Lastly you can tell yabridgectl to set up or update yabridge for all of your
 VST2, VST3 and CLAP plugins at the same time using the commands below.
 Yabridgectl will warn you if it finds unrelated <code>.so</code> files that may have been
@@ -69,7 +69,7 @@ yabridgectl sync
 yabridgectl sync --prune
 <span class="pl-c"><span class="pl-c">#</span> Set up yabridge or update for all plugins, even if it would not be necessary</span>
 yabridgectl sync --force</pre></div>
-<h2 id="user-content-building-from-source"><a aria-hidden="true" class="anchor" href="#user-content-building-from-source" id="user-content-building-from-source" name="user-content-building-from-source"><span aria-hidden="true" class="octicon octicon-link"></span></a>Building from source</h2>
+<h2 id="user-content-building-from-source"><a aria-hidden="true" class="anchor" href="#user-content-building-from-source" id="user-content-building-from-source" name="user-content-building-from-source" tabindex="-1"><span aria-hidden="true" class="octicon octicon-link"></span></a>Building from source</h2>
 <p>After installing <a href="https://rustup.rs/" rel="nofollow">Rust</a>, simply run the command below to
 compile and run:</p>
 <div class="highlight highlight-source-shell"><pre>cargo run --release</pre></div>

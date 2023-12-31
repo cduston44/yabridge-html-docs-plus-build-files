@@ -1,28 +1,31 @@
+//! Convenient and efficient string argument passing.
+//!
 //! This module defines the `Arg` trait and implements it for several common
-//! string types.
+//! string types. This allows users to pass any of these string types directly
+//! to rustix APIs with string arguments, and it allows rustix to implement
+//! NUL-termination without the need for copying where possible.
 
-use crate::ffi::{ZStr, ZString};
+use crate::ffi::{CStr, CString};
 use crate::io;
 #[cfg(feature = "itoa")]
 use crate::path::DecInt;
 use crate::path::SMALL_PATH_BUFFER_SIZE;
 use alloc::borrow::Cow;
+#[cfg(feature = "itoa")]
+use alloc::borrow::ToOwned;
 use alloc::string::String;
 use alloc::vec::Vec;
-use core::str;
+use core::mem::MaybeUninit;
+use core::{ptr, slice, str};
 #[cfg(feature = "std")]
 use std::ffi::{OsStr, OsString};
-#[cfg(feature = "std")]
-#[cfg(target_os = "hermit")]
+#[cfg(all(feature = "std", target_os = "hermit"))]
 use std::os::hermit::ext::ffi::{OsStrExt, OsStringExt};
-#[cfg(feature = "std")]
-#[cfg(unix)]
+#[cfg(all(feature = "std", unix))]
 use std::os::unix::ffi::{OsStrExt, OsStringExt};
-#[cfg(feature = "std")]
-#[cfg(target_os = "vxworks")]
+#[cfg(all(feature = "std", target_os = "vxworks"))]
 use std::os::vxworks::ext::ffi::{OsStrExt, OsStringExt};
-#[cfg(feature = "std")]
-#[cfg(target_os = "wasi")]
+#[cfg(all(feature = "std", target_os = "wasi"))]
 use std::os::wasi::ffi::{OsStrExt, OsStringExt};
 #[cfg(feature = "std")]
 use std::path::{Component, Components, Iter, Path, PathBuf};
@@ -34,23 +37,27 @@ use std::path::{Component, Components, Iter, Path, PathBuf};
 ///
 /// # Example
 ///
-/// ```rust
-/// use rustix::ffi::ZStr;
+/// ```
+/// # #[cfg(any(feature = "fs", feature = "net"))]
+/// use rustix::ffi::CStr;
 /// use rustix::io;
+/// # #[cfg(any(feature = "fs", feature = "net"))]
 /// use rustix::path::Arg;
 ///
+/// # #[cfg(any(feature = "fs", feature = "net"))]
 /// pub fn touch<P: Arg>(path: P) -> io::Result<()> {
-///     let path = path.into_z_str()?;
+///     let path = path.into_c_str()?;
 ///     _touch(&path)
 /// }
 ///
-/// fn _touch(path: &ZStr) -> io::Result<()> {
+/// # #[cfg(any(feature = "fs", feature = "net"))]
+/// fn _touch(path: &CStr) -> io::Result<()> {
 ///     // implementation goes here
 ///     Ok(())
 /// }
 /// ```
 ///
-/// Users can then call `touch("foo")`, `touch(zstr!("foo"))`,
+/// Users can then call `touch("foo")`, `touch(cstr!("foo"))`,
 /// `touch(Path::new("foo"))`, or many other things.
 ///
 /// [`AsRef`]: std::convert::AsRef
@@ -58,53 +65,24 @@ pub trait Arg {
     /// Returns a view of this string as a string slice.
     fn as_str(&self) -> io::Result<&str>;
 
-    /// Returns a potentially-lossy rendering of this string as a `Cow<'_,
-    /// str>`.
+    /// Returns a potentially-lossy rendering of this string as a
+    /// `Cow<'_, str>`.
     fn to_string_lossy(&self) -> Cow<'_, str>;
 
-    /// Returns a view of this string as a maybe-owned [`ZStr`].
-    fn as_cow_z_str(&self) -> io::Result<Cow<'_, ZStr>>;
+    /// Returns a view of this string as a maybe-owned [`CStr`].
+    fn as_cow_c_str(&self) -> io::Result<Cow<'_, CStr>>;
 
     /// Consumes `self` and returns a view of this string as a maybe-owned
-    /// [`ZStr`].
-    fn into_z_str<'b>(self) -> io::Result<Cow<'b, ZStr>>
+    /// [`CStr`].
+    fn into_c_str<'b>(self) -> io::Result<Cow<'b, CStr>>
     where
         Self: 'b;
 
-    /// Runs a closure with `self` passed in as a `&ZStr`.
-    fn into_with_z_str<T, F>(self, f: F) -> io::Result<T>
-    where
-        Self: Sized,
-        F: FnOnce(&ZStr) -> io::Result<T>;
-
-    /// Returns a view of this string as a maybe-owned [`ZStr`].
-    #[cfg(not(feature = "rustc-dep-of-std"))]
-    #[inline]
-    fn as_cow_c_str(&self) -> io::Result<Cow<'_, ZStr>> {
-        self.as_cow_z_str()
-    }
-
-    /// Consumes `self` and returns a view of this string as a maybe-owned
-    /// [`ZStr`].
-    #[cfg(not(feature = "rustc-dep-of-std"))]
-    #[inline]
-    fn into_c_str<'b>(self) -> io::Result<Cow<'b, ZStr>>
-    where
-        Self: 'b + Sized,
-    {
-        self.into_z_str()
-    }
-
-    /// Runs a closure with `self` passed in as a `&ZStr`.
-    #[cfg(not(feature = "rustc-dep-of-std"))]
-    #[inline]
+    /// Runs a closure with `self` passed in as a `&CStr`.
     fn into_with_c_str<T, F>(self, f: F) -> io::Result<T>
     where
         Self: Sized,
-        F: FnOnce(&ZStr) -> io::Result<T>,
-    {
-        self.into_with_z_str(f)
-    }
+        F: FnOnce(&CStr) -> io::Result<T>;
 }
 
 impl Arg for &str {
@@ -119,29 +97,29 @@ impl Arg for &str {
     }
 
     #[inline]
-    fn as_cow_z_str(&self) -> io::Result<Cow<'_, ZStr>> {
+    fn as_cow_c_str(&self) -> io::Result<Cow<'_, CStr>> {
         Ok(Cow::Owned(
-            ZString::new(self.as_bytes()).map_err(|_cstr_err| io::Error::INVAL)?,
+            CString::new(*self).map_err(|_cstr_err| io::Errno::INVAL)?,
         ))
     }
 
     #[inline]
-    fn into_z_str<'b>(self) -> io::Result<Cow<'b, ZStr>>
+    fn into_c_str<'b>(self) -> io::Result<Cow<'b, CStr>>
     where
         Self: 'b,
     {
         Ok(Cow::Owned(
-            ZString::new(self).map_err(|_cstr_err| io::Error::INVAL)?,
+            CString::new(self).map_err(|_cstr_err| io::Errno::INVAL)?,
         ))
     }
 
     #[inline]
-    fn into_with_z_str<T, F>(self, f: F) -> io::Result<T>
+    fn into_with_c_str<T, F>(self, f: F) -> io::Result<T>
     where
         Self: Sized,
-        F: FnOnce(&ZStr) -> io::Result<T>,
+        F: FnOnce(&CStr) -> io::Result<T>,
     {
-        with_z_str(self.as_bytes(), f)
+        with_c_str(self.as_bytes(), f)
     }
 }
 
@@ -157,27 +135,27 @@ impl Arg for &String {
     }
 
     #[inline]
-    fn as_cow_z_str(&self) -> io::Result<Cow<'_, ZStr>> {
+    fn as_cow_c_str(&self) -> io::Result<Cow<'_, CStr>> {
         Ok(Cow::Owned(
-            ZString::new(String::as_str(self).as_bytes()).map_err(|_cstr_err| io::Error::INVAL)?,
+            CString::new(String::as_str(self)).map_err(|_cstr_err| io::Errno::INVAL)?,
         ))
     }
 
     #[inline]
-    fn into_z_str<'b>(self) -> io::Result<Cow<'b, ZStr>>
+    fn into_c_str<'b>(self) -> io::Result<Cow<'b, CStr>>
     where
         Self: 'b,
     {
-        self.as_str().into_z_str()
+        self.as_str().into_c_str()
     }
 
     #[inline]
-    fn into_with_z_str<T, F>(self, f: F) -> io::Result<T>
+    fn into_with_c_str<T, F>(self, f: F) -> io::Result<T>
     where
         Self: Sized,
-        F: FnOnce(&ZStr) -> io::Result<T>,
+        F: FnOnce(&CStr) -> io::Result<T>,
     {
-        with_z_str(self.as_bytes(), f)
+        with_c_str(self.as_bytes(), f)
     }
 }
 
@@ -193,29 +171,29 @@ impl Arg for String {
     }
 
     #[inline]
-    fn as_cow_z_str(&self) -> io::Result<Cow<'_, ZStr>> {
+    fn as_cow_c_str(&self) -> io::Result<Cow<'_, CStr>> {
         Ok(Cow::Owned(
-            ZString::new(self.as_bytes()).map_err(|_cstr_err| io::Error::INVAL)?,
+            CString::new(self.as_str()).map_err(|_cstr_err| io::Errno::INVAL)?,
         ))
     }
 
     #[inline]
-    fn into_z_str<'b>(self) -> io::Result<Cow<'b, ZStr>>
+    fn into_c_str<'b>(self) -> io::Result<Cow<'b, CStr>>
     where
         Self: 'b,
     {
         Ok(Cow::Owned(
-            ZString::new(self).map_err(|_cstr_err| io::Error::INVAL)?,
+            CString::new(self).map_err(|_cstr_err| io::Errno::INVAL)?,
         ))
     }
 
     #[inline]
-    fn into_with_z_str<T, F>(self, f: F) -> io::Result<T>
+    fn into_with_c_str<T, F>(self, f: F) -> io::Result<T>
     where
         Self: Sized,
-        F: FnOnce(&ZStr) -> io::Result<T>,
+        F: FnOnce(&CStr) -> io::Result<T>,
     {
-        f(&ZString::new(self).map_err(|_cstr_err| io::Error::INVAL)?)
+        f(&CString::new(self).map_err(|_cstr_err| io::Errno::INVAL)?)
     }
 }
 
@@ -223,7 +201,7 @@ impl Arg for String {
 impl Arg for &OsStr {
     #[inline]
     fn as_str(&self) -> io::Result<&str> {
-        self.to_str().ok_or(io::Error::INVAL)
+        self.to_str().ok_or(io::Errno::INVAL)
     }
 
     #[inline]
@@ -232,29 +210,29 @@ impl Arg for &OsStr {
     }
 
     #[inline]
-    fn as_cow_z_str(&self) -> io::Result<Cow<'_, ZStr>> {
+    fn as_cow_c_str(&self) -> io::Result<Cow<'_, CStr>> {
         Ok(Cow::Owned(
-            ZString::new(self.as_bytes()).map_err(|_cstr_err| io::Error::INVAL)?,
+            CString::new(self.as_bytes()).map_err(|_cstr_err| io::Errno::INVAL)?,
         ))
     }
 
     #[inline]
-    fn into_z_str<'b>(self) -> io::Result<Cow<'b, ZStr>>
+    fn into_c_str<'b>(self) -> io::Result<Cow<'b, CStr>>
     where
         Self: 'b,
     {
         Ok(Cow::Owned(
-            ZString::new(self.as_bytes()).map_err(|_cstr_err| io::Error::INVAL)?,
+            CString::new(self.as_bytes()).map_err(|_cstr_err| io::Errno::INVAL)?,
         ))
     }
 
     #[inline]
-    fn into_with_z_str<T, F>(self, f: F) -> io::Result<T>
+    fn into_with_c_str<T, F>(self, f: F) -> io::Result<T>
     where
         Self: Sized,
-        F: FnOnce(&ZStr) -> io::Result<T>,
+        F: FnOnce(&CStr) -> io::Result<T>,
     {
-        with_z_str(self.as_bytes(), f)
+        with_c_str(self.as_bytes(), f)
     }
 }
 
@@ -262,7 +240,7 @@ impl Arg for &OsStr {
 impl Arg for &OsString {
     #[inline]
     fn as_str(&self) -> io::Result<&str> {
-        OsString::as_os_str(self).to_str().ok_or(io::Error::INVAL)
+        OsString::as_os_str(self).to_str().ok_or(io::Errno::INVAL)
     }
 
     #[inline]
@@ -271,28 +249,28 @@ impl Arg for &OsString {
     }
 
     #[inline]
-    fn as_cow_z_str(&self) -> io::Result<Cow<'_, ZStr>> {
+    fn as_cow_c_str(&self) -> io::Result<Cow<'_, CStr>> {
         Ok(Cow::Owned(
-            ZString::new(OsString::as_os_str(self).as_bytes())
-                .map_err(|_cstr_err| io::Error::INVAL)?,
+            CString::new(OsString::as_os_str(self).as_bytes())
+                .map_err(|_cstr_err| io::Errno::INVAL)?,
         ))
     }
 
     #[inline]
-    fn into_z_str<'b>(self) -> io::Result<Cow<'b, ZStr>>
+    fn into_c_str<'b>(self) -> io::Result<Cow<'b, CStr>>
     where
         Self: 'b,
     {
-        self.as_os_str().into_z_str()
+        self.as_os_str().into_c_str()
     }
 
     #[inline]
-    fn into_with_z_str<T, F>(self, f: F) -> io::Result<T>
+    fn into_with_c_str<T, F>(self, f: F) -> io::Result<T>
     where
         Self: Sized,
-        F: FnOnce(&ZStr) -> io::Result<T>,
+        F: FnOnce(&CStr) -> io::Result<T>,
     {
-        with_z_str(self.as_bytes(), f)
+        with_c_str(self.as_bytes(), f)
     }
 }
 
@@ -300,7 +278,7 @@ impl Arg for &OsString {
 impl Arg for OsString {
     #[inline]
     fn as_str(&self) -> io::Result<&str> {
-        self.as_os_str().to_str().ok_or(io::Error::INVAL)
+        self.as_os_str().to_str().ok_or(io::Errno::INVAL)
     }
 
     #[inline]
@@ -309,29 +287,29 @@ impl Arg for OsString {
     }
 
     #[inline]
-    fn as_cow_z_str(&self) -> io::Result<Cow<'_, ZStr>> {
+    fn as_cow_c_str(&self) -> io::Result<Cow<'_, CStr>> {
         Ok(Cow::Owned(
-            ZString::new(self.as_bytes()).map_err(|_cstr_err| io::Error::INVAL)?,
+            CString::new(self.as_bytes()).map_err(|_cstr_err| io::Errno::INVAL)?,
         ))
     }
 
     #[inline]
-    fn into_z_str<'b>(self) -> io::Result<Cow<'b, ZStr>>
+    fn into_c_str<'b>(self) -> io::Result<Cow<'b, CStr>>
     where
         Self: 'b,
     {
         Ok(Cow::Owned(
-            ZString::new(self.into_vec()).map_err(|_cstr_err| io::Error::INVAL)?,
+            CString::new(self.into_vec()).map_err(|_cstr_err| io::Errno::INVAL)?,
         ))
     }
 
     #[inline]
-    fn into_with_z_str<T, F>(self, f: F) -> io::Result<T>
+    fn into_with_c_str<T, F>(self, f: F) -> io::Result<T>
     where
         Self: Sized,
-        F: FnOnce(&ZStr) -> io::Result<T>,
+        F: FnOnce(&CStr) -> io::Result<T>,
     {
-        f(&ZString::new(self.into_vec()).map_err(|_cstr_err| io::Error::INVAL)?)
+        f(&CString::new(self.into_vec()).map_err(|_cstr_err| io::Errno::INVAL)?)
     }
 }
 
@@ -339,7 +317,7 @@ impl Arg for OsString {
 impl Arg for &Path {
     #[inline]
     fn as_str(&self) -> io::Result<&str> {
-        self.as_os_str().to_str().ok_or(io::Error::INVAL)
+        self.as_os_str().to_str().ok_or(io::Errno::INVAL)
     }
 
     #[inline]
@@ -348,29 +326,29 @@ impl Arg for &Path {
     }
 
     #[inline]
-    fn as_cow_z_str(&self) -> io::Result<Cow<'_, ZStr>> {
+    fn as_cow_c_str(&self) -> io::Result<Cow<'_, CStr>> {
         Ok(Cow::Owned(
-            ZString::new(self.as_os_str().as_bytes()).map_err(|_cstr_err| io::Error::INVAL)?,
+            CString::new(self.as_os_str().as_bytes()).map_err(|_cstr_err| io::Errno::INVAL)?,
         ))
     }
 
     #[inline]
-    fn into_z_str<'b>(self) -> io::Result<Cow<'b, ZStr>>
+    fn into_c_str<'b>(self) -> io::Result<Cow<'b, CStr>>
     where
         Self: 'b,
     {
         Ok(Cow::Owned(
-            ZString::new(self.as_os_str().as_bytes()).map_err(|_cstr_err| io::Error::INVAL)?,
+            CString::new(self.as_os_str().as_bytes()).map_err(|_cstr_err| io::Errno::INVAL)?,
         ))
     }
 
     #[inline]
-    fn into_with_z_str<T, F>(self, f: F) -> io::Result<T>
+    fn into_with_c_str<T, F>(self, f: F) -> io::Result<T>
     where
         Self: Sized,
-        F: FnOnce(&ZStr) -> io::Result<T>,
+        F: FnOnce(&CStr) -> io::Result<T>,
     {
-        with_z_str(self.as_os_str().as_bytes(), f)
+        with_c_str(self.as_os_str().as_bytes(), f)
     }
 }
 
@@ -381,7 +359,7 @@ impl Arg for &PathBuf {
         PathBuf::as_path(self)
             .as_os_str()
             .to_str()
-            .ok_or(io::Error::INVAL)
+            .ok_or(io::Errno::INVAL)
     }
 
     #[inline]
@@ -390,28 +368,28 @@ impl Arg for &PathBuf {
     }
 
     #[inline]
-    fn as_cow_z_str(&self) -> io::Result<Cow<'_, ZStr>> {
+    fn as_cow_c_str(&self) -> io::Result<Cow<'_, CStr>> {
         Ok(Cow::Owned(
-            ZString::new(PathBuf::as_path(self).as_os_str().as_bytes())
-                .map_err(|_cstr_err| io::Error::INVAL)?,
+            CString::new(PathBuf::as_path(self).as_os_str().as_bytes())
+                .map_err(|_cstr_err| io::Errno::INVAL)?,
         ))
     }
 
     #[inline]
-    fn into_z_str<'b>(self) -> io::Result<Cow<'b, ZStr>>
+    fn into_c_str<'b>(self) -> io::Result<Cow<'b, CStr>>
     where
         Self: 'b,
     {
-        self.as_path().into_z_str()
+        self.as_path().into_c_str()
     }
 
     #[inline]
-    fn into_with_z_str<T, F>(self, f: F) -> io::Result<T>
+    fn into_with_c_str<T, F>(self, f: F) -> io::Result<T>
     where
         Self: Sized,
-        F: FnOnce(&ZStr) -> io::Result<T>,
+        F: FnOnce(&CStr) -> io::Result<T>,
     {
-        with_z_str(self.as_os_str().as_bytes(), f)
+        with_c_str(self.as_os_str().as_bytes(), f)
     }
 }
 
@@ -419,7 +397,7 @@ impl Arg for &PathBuf {
 impl Arg for PathBuf {
     #[inline]
     fn as_str(&self) -> io::Result<&str> {
-        self.as_os_str().to_str().ok_or(io::Error::INVAL)
+        self.as_os_str().to_str().ok_or(io::Errno::INVAL)
     }
 
     #[inline]
@@ -428,53 +406,53 @@ impl Arg for PathBuf {
     }
 
     #[inline]
-    fn as_cow_z_str(&self) -> io::Result<Cow<'_, ZStr>> {
+    fn as_cow_c_str(&self) -> io::Result<Cow<'_, CStr>> {
         Ok(Cow::Owned(
-            ZString::new(self.as_os_str().as_bytes()).map_err(|_cstr_err| io::Error::INVAL)?,
+            CString::new(self.as_os_str().as_bytes()).map_err(|_cstr_err| io::Errno::INVAL)?,
         ))
     }
 
     #[inline]
-    fn into_z_str<'b>(self) -> io::Result<Cow<'b, ZStr>>
+    fn into_c_str<'b>(self) -> io::Result<Cow<'b, CStr>>
     where
         Self: 'b,
     {
         Ok(Cow::Owned(
-            ZString::new(self.into_os_string().into_vec()).map_err(|_cstr_err| io::Error::INVAL)?,
+            CString::new(self.into_os_string().into_vec()).map_err(|_cstr_err| io::Errno::INVAL)?,
         ))
     }
 
     #[inline]
-    fn into_with_z_str<T, F>(self, f: F) -> io::Result<T>
+    fn into_with_c_str<T, F>(self, f: F) -> io::Result<T>
     where
         Self: Sized,
-        F: FnOnce(&ZStr) -> io::Result<T>,
+        F: FnOnce(&CStr) -> io::Result<T>,
     {
         f(
-            &ZString::new(self.into_os_string().into_vec())
-                .map_err(|_cstr_err| io::Error::INVAL)?,
+            &CString::new(self.into_os_string().into_vec())
+                .map_err(|_cstr_err| io::Errno::INVAL)?,
         )
     }
 }
 
-impl Arg for &ZStr {
+impl Arg for &CStr {
     #[inline]
     fn as_str(&self) -> io::Result<&str> {
-        self.to_str().map_err(|_utf8_err| io::Error::INVAL)
+        self.to_str().map_err(|_utf8_err| io::Errno::INVAL)
     }
 
     #[inline]
     fn to_string_lossy(&self) -> Cow<'_, str> {
-        ZStr::to_string_lossy(self)
+        CStr::to_string_lossy(self)
     }
 
     #[inline]
-    fn as_cow_z_str(&self) -> io::Result<Cow<'_, ZStr>> {
+    fn as_cow_c_str(&self) -> io::Result<Cow<'_, CStr>> {
         Ok(Cow::Borrowed(self))
     }
 
     #[inline]
-    fn into_z_str<'b>(self) -> io::Result<Cow<'b, ZStr>>
+    fn into_c_str<'b>(self) -> io::Result<Cow<'b, CStr>>
     where
         Self: 'b,
     {
@@ -482,16 +460,16 @@ impl Arg for &ZStr {
     }
 
     #[inline]
-    fn into_with_z_str<T, F>(self, f: F) -> io::Result<T>
+    fn into_with_c_str<T, F>(self, f: F) -> io::Result<T>
     where
         Self: Sized,
-        F: FnOnce(&ZStr) -> io::Result<T>,
+        F: FnOnce(&CStr) -> io::Result<T>,
     {
         f(self)
     }
 }
 
-impl Arg for &ZString {
+impl Arg for &CString {
     #[inline]
     fn as_str(&self) -> io::Result<&str> {
         unimplemented!()
@@ -503,12 +481,12 @@ impl Arg for &ZString {
     }
 
     #[inline]
-    fn as_cow_z_str(&self) -> io::Result<Cow<'_, ZStr>> {
+    fn as_cow_c_str(&self) -> io::Result<Cow<'_, CStr>> {
         Ok(Cow::Borrowed(self))
     }
 
     #[inline]
-    fn into_z_str<'b>(self) -> io::Result<Cow<'b, ZStr>>
+    fn into_c_str<'b>(self) -> io::Result<Cow<'b, CStr>>
     where
         Self: 'b,
     {
@@ -516,33 +494,33 @@ impl Arg for &ZString {
     }
 
     #[inline]
-    fn into_with_z_str<T, F>(self, f: F) -> io::Result<T>
+    fn into_with_c_str<T, F>(self, f: F) -> io::Result<T>
     where
         Self: Sized,
-        F: FnOnce(&ZStr) -> io::Result<T>,
+        F: FnOnce(&CStr) -> io::Result<T>,
     {
         f(self)
     }
 }
 
-impl Arg for ZString {
+impl Arg for CString {
     #[inline]
     fn as_str(&self) -> io::Result<&str> {
-        self.to_str().map_err(|_utf8_err| io::Error::INVAL)
+        self.to_str().map_err(|_utf8_err| io::Errno::INVAL)
     }
 
     #[inline]
     fn to_string_lossy(&self) -> Cow<'_, str> {
-        ZStr::to_string_lossy(self)
+        CStr::to_string_lossy(self)
     }
 
     #[inline]
-    fn as_cow_z_str(&self) -> io::Result<Cow<'_, ZStr>> {
+    fn as_cow_c_str(&self) -> io::Result<Cow<'_, CStr>> {
         Ok(Cow::Borrowed(self))
     }
 
     #[inline]
-    fn into_z_str<'b>(self) -> io::Result<Cow<'b, ZStr>>
+    fn into_c_str<'b>(self) -> io::Result<Cow<'b, CStr>>
     where
         Self: 'b,
     {
@@ -550,10 +528,10 @@ impl Arg for ZString {
     }
 
     #[inline]
-    fn into_with_z_str<T, F>(self, f: F) -> io::Result<T>
+    fn into_with_c_str<T, F>(self, f: F) -> io::Result<T>
     where
         Self: Sized,
-        F: FnOnce(&ZStr) -> io::Result<T>,
+        F: FnOnce(&CStr) -> io::Result<T>,
     {
         f(&self)
     }
@@ -571,33 +549,33 @@ impl<'a> Arg for Cow<'a, str> {
     }
 
     #[inline]
-    fn as_cow_z_str(&self) -> io::Result<Cow<'_, ZStr>> {
+    fn as_cow_c_str(&self) -> io::Result<Cow<'_, CStr>> {
         Ok(Cow::Owned(
-            ZString::new(self.as_ref()).map_err(|_cstr_err| io::Error::INVAL)?,
+            CString::new(self.as_ref()).map_err(|_cstr_err| io::Errno::INVAL)?,
         ))
     }
 
     #[inline]
-    fn into_z_str<'b>(self) -> io::Result<Cow<'b, ZStr>>
+    fn into_c_str<'b>(self) -> io::Result<Cow<'b, CStr>>
     where
         Self: 'b,
     {
         Ok(Cow::Owned(
             match self {
-                Cow::Owned(s) => ZString::new(s),
-                Cow::Borrowed(s) => ZString::new(s),
+                Cow::Owned(s) => CString::new(s),
+                Cow::Borrowed(s) => CString::new(s),
             }
-            .map_err(|_cstr_err| io::Error::INVAL)?,
+            .map_err(|_cstr_err| io::Errno::INVAL)?,
         ))
     }
 
     #[inline]
-    fn into_with_z_str<T, F>(self, f: F) -> io::Result<T>
+    fn into_with_c_str<T, F>(self, f: F) -> io::Result<T>
     where
         Self: Sized,
-        F: FnOnce(&ZStr) -> io::Result<T>,
+        F: FnOnce(&CStr) -> io::Result<T>,
     {
-        with_z_str(self.as_bytes(), f)
+        with_c_str(self.as_bytes(), f)
     }
 }
 
@@ -605,7 +583,7 @@ impl<'a> Arg for Cow<'a, str> {
 impl<'a> Arg for Cow<'a, OsStr> {
     #[inline]
     fn as_str(&self) -> io::Result<&str> {
-        (**self).to_str().ok_or(io::Error::INVAL)
+        (**self).to_str().ok_or(io::Errno::INVAL)
     }
 
     #[inline]
@@ -614,55 +592,55 @@ impl<'a> Arg for Cow<'a, OsStr> {
     }
 
     #[inline]
-    fn as_cow_z_str(&self) -> io::Result<Cow<'_, ZStr>> {
+    fn as_cow_c_str(&self) -> io::Result<Cow<'_, CStr>> {
         Ok(Cow::Owned(
-            ZString::new(self.as_bytes()).map_err(|_cstr_err| io::Error::INVAL)?,
+            CString::new(self.as_bytes()).map_err(|_cstr_err| io::Errno::INVAL)?,
         ))
     }
 
     #[inline]
-    fn into_z_str<'b>(self) -> io::Result<Cow<'b, ZStr>>
+    fn into_c_str<'b>(self) -> io::Result<Cow<'b, CStr>>
     where
         Self: 'b,
     {
         Ok(Cow::Owned(
             match self {
-                Cow::Owned(os) => ZString::new(os.into_vec()),
-                Cow::Borrowed(os) => ZString::new(os.as_bytes()),
+                Cow::Owned(os) => CString::new(os.into_vec()),
+                Cow::Borrowed(os) => CString::new(os.as_bytes()),
             }
-            .map_err(|_cstr_err| io::Error::INVAL)?,
+            .map_err(|_cstr_err| io::Errno::INVAL)?,
         ))
     }
 
     #[inline]
-    fn into_with_z_str<T, F>(self, f: F) -> io::Result<T>
+    fn into_with_c_str<T, F>(self, f: F) -> io::Result<T>
     where
         Self: Sized,
-        F: FnOnce(&ZStr) -> io::Result<T>,
+        F: FnOnce(&CStr) -> io::Result<T>,
     {
-        with_z_str(self.as_bytes(), f)
+        with_c_str(self.as_bytes(), f)
     }
 }
 
-impl<'a> Arg for Cow<'a, ZStr> {
+impl<'a> Arg for Cow<'a, CStr> {
     #[inline]
     fn as_str(&self) -> io::Result<&str> {
-        self.to_str().map_err(|_utf8_err| io::Error::INVAL)
+        self.to_str().map_err(|_utf8_err| io::Errno::INVAL)
     }
 
     #[inline]
     fn to_string_lossy(&self) -> Cow<'_, str> {
-        let borrow: &ZStr = core::borrow::Borrow::borrow(self);
+        let borrow: &CStr = core::borrow::Borrow::borrow(self);
         borrow.to_string_lossy()
     }
 
     #[inline]
-    fn as_cow_z_str(&self) -> io::Result<Cow<'_, ZStr>> {
+    fn as_cow_c_str(&self) -> io::Result<Cow<'_, CStr>> {
         Ok(Cow::Borrowed(self))
     }
 
     #[inline]
-    fn into_z_str<'b>(self) -> io::Result<Cow<'b, ZStr>>
+    fn into_c_str<'b>(self) -> io::Result<Cow<'b, CStr>>
     where
         Self: 'b,
     {
@@ -670,10 +648,10 @@ impl<'a> Arg for Cow<'a, ZStr> {
     }
 
     #[inline]
-    fn into_with_z_str<T, F>(self, f: F) -> io::Result<T>
+    fn into_with_c_str<T, F>(self, f: F) -> io::Result<T>
     where
         Self: Sized,
-        F: FnOnce(&ZStr) -> io::Result<T>,
+        F: FnOnce(&CStr) -> io::Result<T>,
     {
         f(&self)
     }
@@ -683,7 +661,7 @@ impl<'a> Arg for Cow<'a, ZStr> {
 impl<'a> Arg for Component<'a> {
     #[inline]
     fn as_str(&self) -> io::Result<&str> {
-        self.as_os_str().to_str().ok_or(io::Error::INVAL)
+        self.as_os_str().to_str().ok_or(io::Errno::INVAL)
     }
 
     #[inline]
@@ -692,29 +670,29 @@ impl<'a> Arg for Component<'a> {
     }
 
     #[inline]
-    fn as_cow_z_str(&self) -> io::Result<Cow<'_, ZStr>> {
+    fn as_cow_c_str(&self) -> io::Result<Cow<'_, CStr>> {
         Ok(Cow::Owned(
-            ZString::new(self.as_os_str().as_bytes()).map_err(|_cstr_err| io::Error::INVAL)?,
+            CString::new(self.as_os_str().as_bytes()).map_err(|_cstr_err| io::Errno::INVAL)?,
         ))
     }
 
     #[inline]
-    fn into_z_str<'b>(self) -> io::Result<Cow<'b, ZStr>>
+    fn into_c_str<'b>(self) -> io::Result<Cow<'b, CStr>>
     where
         Self: 'b,
     {
         Ok(Cow::Owned(
-            ZString::new(self.as_os_str().as_bytes()).map_err(|_cstr_err| io::Error::INVAL)?,
+            CString::new(self.as_os_str().as_bytes()).map_err(|_cstr_err| io::Errno::INVAL)?,
         ))
     }
 
     #[inline]
-    fn into_with_z_str<T, F>(self, f: F) -> io::Result<T>
+    fn into_with_c_str<T, F>(self, f: F) -> io::Result<T>
     where
         Self: Sized,
-        F: FnOnce(&ZStr) -> io::Result<T>,
+        F: FnOnce(&CStr) -> io::Result<T>,
     {
-        with_z_str(self.as_os_str().as_bytes(), f)
+        with_c_str(self.as_os_str().as_bytes(), f)
     }
 }
 
@@ -722,7 +700,7 @@ impl<'a> Arg for Component<'a> {
 impl<'a> Arg for Components<'a> {
     #[inline]
     fn as_str(&self) -> io::Result<&str> {
-        self.as_path().to_str().ok_or(io::Error::INVAL)
+        self.as_path().to_str().ok_or(io::Errno::INVAL)
     }
 
     #[inline]
@@ -731,31 +709,31 @@ impl<'a> Arg for Components<'a> {
     }
 
     #[inline]
-    fn as_cow_z_str(&self) -> io::Result<Cow<'_, ZStr>> {
+    fn as_cow_c_str(&self) -> io::Result<Cow<'_, CStr>> {
         Ok(Cow::Owned(
-            ZString::new(self.as_path().as_os_str().as_bytes())
-                .map_err(|_cstr_err| io::Error::INVAL)?,
+            CString::new(self.as_path().as_os_str().as_bytes())
+                .map_err(|_cstr_err| io::Errno::INVAL)?,
         ))
     }
 
     #[inline]
-    fn into_z_str<'b>(self) -> io::Result<Cow<'b, ZStr>>
+    fn into_c_str<'b>(self) -> io::Result<Cow<'b, CStr>>
     where
         Self: 'b,
     {
         Ok(Cow::Owned(
-            ZString::new(self.as_path().as_os_str().as_bytes())
-                .map_err(|_cstr_err| io::Error::INVAL)?,
+            CString::new(self.as_path().as_os_str().as_bytes())
+                .map_err(|_cstr_err| io::Errno::INVAL)?,
         ))
     }
 
     #[inline]
-    fn into_with_z_str<T, F>(self, f: F) -> io::Result<T>
+    fn into_with_c_str<T, F>(self, f: F) -> io::Result<T>
     where
         Self: Sized,
-        F: FnOnce(&ZStr) -> io::Result<T>,
+        F: FnOnce(&CStr) -> io::Result<T>,
     {
-        with_z_str(self.as_path().as_os_str().as_bytes(), f)
+        with_c_str(self.as_path().as_os_str().as_bytes(), f)
     }
 }
 
@@ -763,7 +741,7 @@ impl<'a> Arg for Components<'a> {
 impl<'a> Arg for Iter<'a> {
     #[inline]
     fn as_str(&self) -> io::Result<&str> {
-        self.as_path().to_str().ok_or(io::Error::INVAL)
+        self.as_path().to_str().ok_or(io::Errno::INVAL)
     }
 
     #[inline]
@@ -772,38 +750,38 @@ impl<'a> Arg for Iter<'a> {
     }
 
     #[inline]
-    fn as_cow_z_str(&self) -> io::Result<Cow<'_, ZStr>> {
+    fn as_cow_c_str(&self) -> io::Result<Cow<'_, CStr>> {
         Ok(Cow::Owned(
-            ZString::new(self.as_path().as_os_str().as_bytes())
-                .map_err(|_cstr_err| io::Error::INVAL)?,
+            CString::new(self.as_path().as_os_str().as_bytes())
+                .map_err(|_cstr_err| io::Errno::INVAL)?,
         ))
     }
 
     #[inline]
-    fn into_z_str<'b>(self) -> io::Result<Cow<'b, ZStr>>
+    fn into_c_str<'b>(self) -> io::Result<Cow<'b, CStr>>
     where
         Self: 'b,
     {
         Ok(Cow::Owned(
-            ZString::new(self.as_path().as_os_str().as_bytes())
-                .map_err(|_cstr_err| io::Error::INVAL)?,
+            CString::new(self.as_path().as_os_str().as_bytes())
+                .map_err(|_cstr_err| io::Errno::INVAL)?,
         ))
     }
 
     #[inline]
-    fn into_with_z_str<T, F>(self, f: F) -> io::Result<T>
+    fn into_with_c_str<T, F>(self, f: F) -> io::Result<T>
     where
         Self: Sized,
-        F: FnOnce(&ZStr) -> io::Result<T>,
+        F: FnOnce(&CStr) -> io::Result<T>,
     {
-        with_z_str(self.as_path().as_os_str().as_bytes(), f)
+        with_c_str(self.as_path().as_os_str().as_bytes(), f)
     }
 }
 
 impl Arg for &[u8] {
     #[inline]
     fn as_str(&self) -> io::Result<&str> {
-        str::from_utf8(self).map_err(|_utf8_err| io::Error::INVAL)
+        str::from_utf8(self).map_err(|_utf8_err| io::Errno::INVAL)
     }
 
     #[inline]
@@ -812,36 +790,36 @@ impl Arg for &[u8] {
     }
 
     #[inline]
-    fn as_cow_z_str(&self) -> io::Result<Cow<'_, ZStr>> {
+    fn as_cow_c_str(&self) -> io::Result<Cow<'_, CStr>> {
         Ok(Cow::Owned(
-            ZString::new(*self).map_err(|_cstr_err| io::Error::INVAL)?,
+            CString::new(*self).map_err(|_cstr_err| io::Errno::INVAL)?,
         ))
     }
 
     #[inline]
-    fn into_z_str<'b>(self) -> io::Result<Cow<'b, ZStr>>
+    fn into_c_str<'b>(self) -> io::Result<Cow<'b, CStr>>
     where
         Self: 'b,
     {
         Ok(Cow::Owned(
-            ZString::new(self).map_err(|_cstr_err| io::Error::INVAL)?,
+            CString::new(self).map_err(|_cstr_err| io::Errno::INVAL)?,
         ))
     }
 
     #[inline]
-    fn into_with_z_str<T, F>(self, f: F) -> io::Result<T>
+    fn into_with_c_str<T, F>(self, f: F) -> io::Result<T>
     where
         Self: Sized,
-        F: FnOnce(&ZStr) -> io::Result<T>,
+        F: FnOnce(&CStr) -> io::Result<T>,
     {
-        with_z_str(self, f)
+        with_c_str(self, f)
     }
 }
 
 impl Arg for &Vec<u8> {
     #[inline]
     fn as_str(&self) -> io::Result<&str> {
-        str::from_utf8(self).map_err(|_utf8_err| io::Error::INVAL)
+        str::from_utf8(self).map_err(|_utf8_err| io::Errno::INVAL)
     }
 
     #[inline]
@@ -850,36 +828,36 @@ impl Arg for &Vec<u8> {
     }
 
     #[inline]
-    fn as_cow_z_str(&self) -> io::Result<Cow<'_, ZStr>> {
+    fn as_cow_c_str(&self) -> io::Result<Cow<'_, CStr>> {
         Ok(Cow::Owned(
-            ZString::new(self.as_slice()).map_err(|_cstr_err| io::Error::INVAL)?,
+            CString::new(self.as_slice()).map_err(|_cstr_err| io::Errno::INVAL)?,
         ))
     }
 
     #[inline]
-    fn into_z_str<'b>(self) -> io::Result<Cow<'b, ZStr>>
+    fn into_c_str<'b>(self) -> io::Result<Cow<'b, CStr>>
     where
         Self: 'b,
     {
         Ok(Cow::Owned(
-            ZString::new(self.as_slice()).map_err(|_cstr_err| io::Error::INVAL)?,
+            CString::new(self.as_slice()).map_err(|_cstr_err| io::Errno::INVAL)?,
         ))
     }
 
     #[inline]
-    fn into_with_z_str<T, F>(self, f: F) -> io::Result<T>
+    fn into_with_c_str<T, F>(self, f: F) -> io::Result<T>
     where
         Self: Sized,
-        F: FnOnce(&ZStr) -> io::Result<T>,
+        F: FnOnce(&CStr) -> io::Result<T>,
     {
-        with_z_str(self, f)
+        with_c_str(self, f)
     }
 }
 
 impl Arg for Vec<u8> {
     #[inline]
     fn as_str(&self) -> io::Result<&str> {
-        str::from_utf8(self).map_err(|_utf8_err| io::Error::INVAL)
+        str::from_utf8(self).map_err(|_utf8_err| io::Errno::INVAL)
     }
 
     #[inline]
@@ -888,29 +866,29 @@ impl Arg for Vec<u8> {
     }
 
     #[inline]
-    fn as_cow_z_str(&self) -> io::Result<Cow<'_, ZStr>> {
+    fn as_cow_c_str(&self) -> io::Result<Cow<'_, CStr>> {
         Ok(Cow::Owned(
-            ZString::new(self.as_slice()).map_err(|_cstr_err| io::Error::INVAL)?,
+            CString::new(self.as_slice()).map_err(|_cstr_err| io::Errno::INVAL)?,
         ))
     }
 
     #[inline]
-    fn into_z_str<'b>(self) -> io::Result<Cow<'b, ZStr>>
+    fn into_c_str<'b>(self) -> io::Result<Cow<'b, CStr>>
     where
         Self: 'b,
     {
         Ok(Cow::Owned(
-            ZString::new(self).map_err(|_cstr_err| io::Error::INVAL)?,
+            CString::new(self).map_err(|_cstr_err| io::Errno::INVAL)?,
         ))
     }
 
     #[inline]
-    fn into_with_z_str<T, F>(self, f: F) -> io::Result<T>
+    fn into_with_c_str<T, F>(self, f: F) -> io::Result<T>
     where
         Self: Sized,
-        F: FnOnce(&ZStr) -> io::Result<T>,
+        F: FnOnce(&CStr) -> io::Result<T>,
     {
-        f(&ZString::new(self).map_err(|_cstr_err| io::Error::INVAL)?)
+        f(&CString::new(self).map_err(|_cstr_err| io::Errno::INVAL)?)
     }
 }
 
@@ -927,37 +905,34 @@ impl Arg for DecInt {
     }
 
     #[inline]
-    fn as_cow_z_str(&self) -> io::Result<Cow<'_, ZStr>> {
-        Ok(Cow::Owned(
-            ZString::new(self.as_bytes()).map_err(|_cstr_err| io::Error::INVAL)?,
-        ))
+    fn as_cow_c_str(&self) -> io::Result<Cow<'_, CStr>> {
+        Ok(Cow::Borrowed(self.as_c_str()))
     }
 
     #[inline]
-    fn into_z_str<'b>(self) -> io::Result<Cow<'b, ZStr>>
+    fn into_c_str<'b>(self) -> io::Result<Cow<'b, CStr>>
     where
         Self: 'b,
     {
-        Ok(Cow::Owned(
-            ZString::new(self.as_bytes()).map_err(|_cstr_err| io::Error::INVAL)?,
-        ))
+        Ok(Cow::Owned(self.as_c_str().to_owned()))
     }
 
     #[inline]
-    fn into_with_z_str<T, F>(self, f: F) -> io::Result<T>
+    fn into_with_c_str<T, F>(self, f: F) -> io::Result<T>
     where
         Self: Sized,
-        F: FnOnce(&ZStr) -> io::Result<T>,
+        F: FnOnce(&CStr) -> io::Result<T>,
     {
-        f(self.as_z_str())
+        f(self.as_c_str())
     }
 }
 
-/// Runs a closure with `bytes` passed in as a `&ZStr`.
+/// Runs a closure with `bytes` passed in as a `&CStr`.
+#[allow(unsafe_code, clippy::int_plus_one)]
 #[inline]
-fn with_z_str<T, F>(bytes: &[u8], f: F) -> io::Result<T>
+fn with_c_str<T, F>(bytes: &[u8], f: F) -> io::Result<T>
 where
-    F: FnOnce(&ZStr) -> io::Result<T>,
+    F: FnOnce(&CStr) -> io::Result<T>,
 {
     // Most paths are less than `SMALL_PATH_BUFFER_SIZE` long. The rest can go
     // through the dynamic allocation path. If you're opening many files in a
@@ -967,20 +942,38 @@ where
 
     // Test with >= so that we have room for the trailing NUL.
     if bytes.len() >= SMALL_PATH_BUFFER_SIZE {
-        return with_z_str_slow_path(bytes, f);
+        return with_c_str_slow_path(bytes, f);
     }
-    let mut buffer: [u8; SMALL_PATH_BUFFER_SIZE] = [0_u8; SMALL_PATH_BUFFER_SIZE];
-    // Copy the bytes in; the buffer already has zeros for the trailing NUL.
-    buffer[..bytes.len()].copy_from_slice(bytes);
-    f(ZStr::from_bytes_with_nul(&buffer[..=bytes.len()]).map_err(|_cstr_err| io::Error::INVAL)?)
+
+    // Taken from
+    // <https://github.com/rust-lang/rust/blob/a00f8ba7fcac1b27341679c51bf5a3271fa82df3/library/std/src/sys/common/small_c_string.rs>
+    let mut buf = MaybeUninit::<[u8; SMALL_PATH_BUFFER_SIZE]>::uninit();
+    let buf_ptr = buf.as_mut_ptr().cast::<u8>();
+
+    // This helps test our safety condition below.
+    debug_assert!(bytes.len() + 1 <= SMALL_PATH_BUFFER_SIZE);
+
+    // SAFETY: `bytes.len() < SMALL_PATH_BUFFER_SIZE` which means we have space
+    // for `bytes.len() + 1` u8s:
+    unsafe {
+        ptr::copy_nonoverlapping(bytes.as_ptr(), buf_ptr, bytes.len());
+        buf_ptr.add(bytes.len()).write(0);
+    }
+
+    // SAFETY: we just wrote the bytes above and they will remain valid for the
+    // duration of f b/c buf doesn't get dropped until the end of the function.
+    match CStr::from_bytes_with_nul(unsafe { slice::from_raw_parts(buf_ptr, bytes.len() + 1) }) {
+        Ok(s) => f(s),
+        Err(_) => Err(io::Errno::INVAL),
+    }
 }
 
-/// The slow path which handles any length. In theory OS's only support up
-/// to `PATH_MAX`, but we let the OS enforce that.
+/// The slow path which handles any length. In theory OS's only support up to
+/// `PATH_MAX`, but we let the OS enforce that.
 #[cold]
-fn with_z_str_slow_path<T, F>(bytes: &[u8], f: F) -> io::Result<T>
+fn with_c_str_slow_path<T, F>(bytes: &[u8], f: F) -> io::Result<T>
 where
-    F: FnOnce(&ZStr) -> io::Result<T>,
+    F: FnOnce(&CStr) -> io::Result<T>,
 {
-    f(&ZString::new(bytes).map_err(|_cstr_err| io::Error::INVAL)?)
+    f(&CString::new(bytes).map_err(|_cstr_err| io::Errno::INVAL)?)
 }

@@ -1,5 +1,21 @@
 use clipboard_win::{Getter, Setter, Clipboard, is_format_avail};
-use clipboard_win::formats::{RawData, Unicode, Bitmap, CF_TEXT, CF_UNICODETEXT, CF_BITMAP};
+use clipboard_win::formats::{RawData, Unicode, Bitmap, CF_TEXT, CF_UNICODETEXT, CF_BITMAP, FileList, CF_HDROP};
+
+fn should_set_file_list() {
+    let _clip = Clipboard::new_attempts(10).expect("Open clipboard");
+    // Note that you will not be able to paste the paths below in Windows Explorer because Explorer
+    // does not play nice with canonicalize: https://github.com/rust-lang/rust/issues/42869.
+    // Pasting in Explorer works fine with regular, non-UNC paths.
+    let paths = [
+        std::fs::canonicalize("tests/test-image.bmp").expect("to get abs path").display().to_string(),
+        std::fs::canonicalize("tests/formats.rs").expect("to get abs path").display().to_string(),
+    ];
+    FileList.write_clipboard(&paths).expect("set file to copy");
+
+    let mut set_files = Vec::<String>::with_capacity(2);
+    FileList.read_clipboard(&mut set_files).expect("read");
+    assert_eq!(set_files, paths);
+}
 
 fn should_work_with_bitmap() {
     let _clip = Clipboard::new_attempts(10).expect("Open clipboard");
@@ -72,6 +88,19 @@ fn should_work_with_bytes() {
     assert_eq!(format!("{0}{0}", text), output);
 }
 
+fn should_work_with_set_empty_string() {
+    let text = "";
+
+    let _clip = Clipboard::new_attempts(10).expect("Open clipboard");
+
+    Unicode.write_clipboard(&text).expect("Write text");
+
+    let mut output = String::new();
+
+    assert_eq!(Unicode.read_clipboard(&mut output).expect("Read text"), text.len());
+    assert_eq!(text, output);
+}
+
 extern "system" {
     fn GetConsoleWindow() -> winapi::shared::windef::HWND;
 }
@@ -104,7 +133,10 @@ fn clipboard_should_work() {
     assert!(is_format_avail(CF_BITMAP));
     run!(should_work_with_string);
     assert!(is_format_avail(CF_UNICODETEXT));
+    run!(should_set_file_list);
+    assert!(is_format_avail(CF_HDROP));
     run!(should_work_with_wide_string);
     run!(should_work_with_bytes);
+    run!(should_work_with_set_empty_string);
     run!(should_set_owner);
 }

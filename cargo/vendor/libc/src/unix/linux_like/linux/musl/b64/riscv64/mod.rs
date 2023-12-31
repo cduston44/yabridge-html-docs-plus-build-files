@@ -8,6 +8,7 @@ pub type blksize_t = ::c_int;
 pub type fsblkcnt64_t = ::c_ulong;
 pub type fsfilcnt64_t = ::c_ulong;
 pub type __u64 = ::c_ulonglong;
+pub type __s64 = ::c_longlong;
 
 s! {
     pub struct pthread_attr_t {
@@ -171,22 +172,6 @@ s! {
         pub shm_nattch: ::shmatt_t,
         __unused5: ::c_ulong,
         __unused6: ::c_ulong,
-    }
-
-    pub struct flock {
-        pub l_type: ::c_short,
-        pub l_whence: ::c_short,
-        pub l_start: ::off_t,
-        pub l_len: ::off_t,
-        pub l_pid: ::pid_t,
-    }
-
-    pub struct flock64 {
-        pub l_type: ::c_short,
-        pub l_whence: ::c_short,
-        pub l_start: ::off64_t,
-        pub l_len: ::off64_t,
-        pub l_pid: ::pid_t,
     }
 }
 

@@ -4,6 +4,7 @@ pub type nlink_t = u64;
 pub type wchar_t = i32;
 pub type greg_t = u64;
 pub type __u64 = u64;
+pub type __s64 = i64;
 
 s! {
     pub struct ipc_perm {
@@ -59,33 +60,33 @@ s! {
     }
 
     pub struct statfs {
-        pub f_type: ::c_ulong,
-        pub f_bsize: ::c_ulong,
+        pub f_type: ::c_uint,
+        pub f_bsize: ::c_uint,
         pub f_blocks: ::fsblkcnt_t,
         pub f_bfree: ::fsblkcnt_t,
         pub f_bavail: ::fsblkcnt_t,
         pub f_files: ::fsfilcnt_t,
         pub f_ffree: ::fsfilcnt_t,
         pub f_fsid: ::fsid_t,
-        pub f_namelen: ::c_ulong,
-        pub f_frsize: ::c_ulong,
-        pub f_flags: ::c_ulong,
-        pub f_spare: [::c_ulong; 4],
+        pub f_namelen: ::c_uint,
+        pub f_frsize: ::c_uint,
+        pub f_flags: ::c_uint,
+        pub f_spare: [::c_uint; 4],
     }
 
     pub struct statfs64 {
-        pub f_type: ::c_ulong,
-        pub f_bsize: ::c_ulong,
+        pub f_type: ::c_uint,
+        pub f_bsize: ::c_uint,
         pub f_blocks: ::fsblkcnt_t,
         pub f_bfree: ::fsblkcnt_t,
         pub f_bavail: ::fsblkcnt_t,
         pub f_files: ::fsfilcnt_t,
         pub f_ffree: ::fsfilcnt_t,
         pub f_fsid: ::fsid_t,
-        pub f_namelen: ::c_ulong,
-        pub f_frsize: ::c_ulong,
-        pub f_flags: ::c_ulong,
-        pub f_spare: [::c_ulong; 4],
+        pub f_namelen: ::c_uint,
+        pub f_frsize: ::c_uint,
+        pub f_flags: ::c_uint,
+        pub f_spare: [::c_uint; 4],
     }
 }
 
@@ -144,6 +145,7 @@ pub const ETIMEDOUT: ::c_int = 110;
 pub const O_APPEND: ::c_int = 1024;
 pub const O_CREAT: ::c_int = 64;
 pub const O_EXCL: ::c_int = 128;
+pub const O_LARGEFILE: ::c_int = 0x8000;
 pub const O_NONBLOCK: ::c_int = 2048;
 pub const SA_NOCLDWAIT: ::c_int = 2;
 pub const SA_ONSTACK: ::c_int = 0x08000000;
@@ -176,6 +178,10 @@ pub const MAP_POPULATE: ::c_int = 0x08000;
 pub const MAP_NONBLOCK: ::c_int = 0x010000;
 pub const MAP_STACK: ::c_int = 0x020000;
 pub const MAP_HUGETLB: ::c_int = 0x040000;
+pub const MAP_SYNC: ::c_int = 0x080000;
+
+pub const PTRACE_SYSEMU: ::c_int = 31;
+pub const PTRACE_SYSEMU_SINGLESTEP: ::c_int = 32;
 
 pub const EDEADLOCK: ::c_int = 35;
 pub const ENAMETOOLONG: ::c_int = 36;
@@ -221,6 +227,7 @@ pub const ENOPROTOOPT: ::c_int = 92;
 pub const EPROTONOSUPPORT: ::c_int = 93;
 pub const ESOCKTNOSUPPORT: ::c_int = 94;
 pub const EOPNOTSUPP: ::c_int = 95;
+pub const ENOTSUP: ::c_int = EOPNOTSUPP;
 pub const EPFNOSUPPORT: ::c_int = 96;
 pub const EAFNOSUPPORT: ::c_int = 97;
 pub const ENETDOWN: ::c_int = 100;
@@ -709,3 +716,11 @@ pub const SYS_faccessat2: ::c_long = 439;
 pub const SYS_process_madvise: ::c_long = 440;
 pub const SYS_epoll_pwait2: ::c_long = 441;
 pub const SYS_mount_setattr: ::c_long = 442;
+pub const SYS_quotactl_fd: ::c_long = 443;
+pub const SYS_landlock_create_ruleset: ::c_long = 444;
+pub const SYS_landlock_add_rule: ::c_long = 445;
+pub const SYS_landlock_restrict_self: ::c_long = 446;
+pub const SYS_memfd_secret: ::c_long = 447;
+pub const SYS_process_mrelease: ::c_long = 448;
+pub const SYS_futex_waitv: ::c_long = 449;
+pub const SYS_set_mempolicy_home_node: ::c_long = 450;

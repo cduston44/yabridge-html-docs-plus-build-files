@@ -1,15 +1,17 @@
-#![allow(non_snake_case, non_camel_case_types, non_upper_case_globals, clashing_extern_declarations, clippy::all)]
-#[link(name = "windows")]
-extern "system" {
-    #[doc = "*Required features: 'Win32_Storage_OperationRecorder', 'Win32_Foundation'*"]
-    #[cfg(feature = "Win32_Foundation")]
-    pub fn OperationEnd(operationendparams: *const OPERATION_END_PARAMETERS) -> super::super::Foundation::BOOL;
-    #[doc = "*Required features: 'Win32_Storage_OperationRecorder', 'Win32_Foundation'*"]
-    #[cfg(feature = "Win32_Foundation")]
-    pub fn OperationStart(operationstartparams: *const OPERATION_START_PARAMETERS) -> super::super::Foundation::BOOL;
-}
+#[cfg(feature = "Win32_Foundation")]
+::windows_targets::link ! ( "advapi32.dll""system" #[doc = "*Required features: `\"Win32_Storage_OperationRecorder\"`, `\"Win32_Foundation\"`*"] fn OperationEnd ( operationendparams : *const OPERATION_END_PARAMETERS ) -> super::super::Foundation:: BOOL );
+#[cfg(feature = "Win32_Foundation")]
+::windows_targets::link ! ( "advapi32.dll""system" #[doc = "*Required features: `\"Win32_Storage_OperationRecorder\"`, `\"Win32_Foundation\"`*"] fn OperationStart ( operationstartparams : *const OPERATION_START_PARAMETERS ) -> super::super::Foundation:: BOOL );
+#[doc = "*Required features: `\"Win32_Storage_OperationRecorder\"`*"]
+pub type OPERATION_END_PARAMETERS_FLAGS = u32;
+#[doc = "*Required features: `\"Win32_Storage_OperationRecorder\"`*"]
+pub const OPERATION_END_DISCARD: OPERATION_END_PARAMETERS_FLAGS = 1u32;
+#[doc = "*Required features: `\"Win32_Storage_OperationRecorder\"`*"]
+pub type OPERATION_START_FLAGS = u32;
+#[doc = "*Required features: `\"Win32_Storage_OperationRecorder\"`*"]
+pub const OPERATION_START_TRACE_CURRENT_THREAD: OPERATION_START_FLAGS = 1u32;
 #[repr(C)]
-#[doc = "*Required features: 'Win32_Storage_OperationRecorder'*"]
+#[doc = "*Required features: `\"Win32_Storage_OperationRecorder\"`*"]
 pub struct OPERATION_END_PARAMETERS {
     pub Version: u32,
     pub OperationId: u32,
@@ -21,16 +23,8 @@ impl ::core::clone::Clone for OPERATION_END_PARAMETERS {
         *self
     }
 }
-#[doc = "*Required features: 'Win32_Storage_OperationRecorder'*"]
-pub type OPERATION_END_PARAMETERS_FLAGS = u32;
-#[doc = "*Required features: 'Win32_Storage_OperationRecorder'*"]
-pub const OPERATION_END_DISCARD: OPERATION_END_PARAMETERS_FLAGS = 1u32;
-#[doc = "*Required features: 'Win32_Storage_OperationRecorder'*"]
-pub type OPERATION_START_FLAGS = u32;
-#[doc = "*Required features: 'Win32_Storage_OperationRecorder'*"]
-pub const OPERATION_START_TRACE_CURRENT_THREAD: OPERATION_START_FLAGS = 1u32;
 #[repr(C)]
-#[doc = "*Required features: 'Win32_Storage_OperationRecorder'*"]
+#[doc = "*Required features: `\"Win32_Storage_OperationRecorder\"`*"]
 pub struct OPERATION_START_PARAMETERS {
     pub Version: u32,
     pub OperationId: u32,

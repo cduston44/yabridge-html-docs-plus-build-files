@@ -34,6 +34,17 @@ pub type pthread_spinlock_t = ::uintptr_t;
 
 pub type segsz_t = usize;
 
+pub type vm_prot_t = u8;
+pub type vm_maptype_t = u8;
+pub type vm_inherit_t = i8;
+pub type vm_subsys_t = ::c_int;
+pub type vm_eflags_t = ::c_uint;
+
+pub type vm_map_t = *mut __c_anonymous_vm_map;
+pub type vm_map_entry_t = *mut vm_map_entry;
+
+pub type pmap = __c_anonymous_pmap;
+
 #[cfg_attr(feature = "extra_traits", derive(Debug))]
 pub enum sem {}
 impl ::Copy for sem {}
@@ -334,6 +345,50 @@ s! {
         pub kp_lwp: ::kinfo_lwp,
         pub kp_ktaddr: ::uintptr_t,
         kp_spare: [::c_int; 2],
+    }
+
+    pub struct __c_anonymous_vm_map {
+        _priv: [::uintptr_t; 36],
+    }
+
+    pub struct vm_map_entry {
+        _priv: [::uintptr_t; 15],
+        pub eflags: ::vm_eflags_t,
+        pub maptype: ::vm_maptype_t,
+        pub protection: ::vm_prot_t,
+        pub max_protection: ::vm_prot_t,
+        pub inheritance: ::vm_inherit_t,
+        pub wired_count: ::c_int,
+        pub id: ::vm_subsys_t,
+    }
+
+    pub struct __c_anonymous_pmap {
+        _priv1: [::uintptr_t; 32],
+        _priv2: [::uintptr_t; 32],
+        _priv3: [::uintptr_t; 32],
+        _priv4: [::uintptr_t; 32],
+        _priv5: [::uintptr_t; 8],
+    }
+
+    pub struct vmspace {
+        vm_map: __c_anonymous_vm_map,
+        vm_pmap: __c_anonymous_pmap,
+        pub vm_flags: ::c_int,
+        pub vm_shm: *mut ::c_char,
+        pub vm_rssize: ::segsz_t,
+        pub vm_swrss: ::segsz_t,
+        pub vm_tsize: ::segsz_t,
+        pub vm_dsize: ::segsz_t,
+        pub vm_ssize: ::segsz_t,
+        pub vm_taddr: *mut ::c_char,
+        pub vm_daddr: *mut ::c_char,
+        pub vm_maxsaddr: *mut ::c_char,
+        pub vm_minsaddr: *mut ::c_char,
+        _unused1: ::c_int,
+        _unused2: ::c_int,
+        pub vm_pagesupply: ::c_int,
+        pub vm_holdcnt: ::c_uint,
+        pub vm_refcnt: ::c_uint,
     }
 
     pub struct cpuctl_msr_args_t {
@@ -1011,6 +1066,8 @@ pub const CPUCTL_MSRSBIT: ::c_int = 0xc0106305;
 pub const CPUCTL_MSRCBIT: ::c_int = 0xc0106306;
 pub const CPUCTL_CPUID_COUNT: ::c_int = 0xc0106307;
 
+pub const CPU_SETSIZE: ::size_t = ::mem::size_of::<::cpumask_t>() * 8;
+
 pub const EVFILT_READ: i16 = -1;
 pub const EVFILT_WRITE: i16 = -2;
 pub const EVFILT_AIO: i16 = -3;
@@ -1034,6 +1091,7 @@ pub const EV_NODATA: u16 = 0x1000;
 pub const EV_FLAG1: u16 = 0x2000;
 pub const EV_ERROR: u16 = 0x4000;
 pub const EV_EOF: u16 = 0x8000;
+pub const EV_HUP: u16 = 0x8000;
 pub const EV_SYSFLAGS: u16 = 0xf000;
 
 pub const FIODNAME: ::c_ulong = 0x80106678;
@@ -1075,7 +1133,7 @@ pub const PROC_REAP_STATUS: ::c_int = 0x0003;
 pub const PROC_PDEATHSIG_CTL: ::c_int = 0x0004;
 pub const PROC_PDEATHSIG_STATUS: ::c_int = 0x0005;
 
-// https://github.com/DragonFlyBSD/DragonFlyBSD/blob/master/sys/net/if.h#L101
+// https://github.com/DragonFlyBSD/DragonFlyBSD/blob/HEAD/sys/net/if.h#L101
 pub const IFF_UP: ::c_int = 0x1; // interface is up
 pub const IFF_BROADCAST: ::c_int = 0x2; // broadcast address valid
 pub const IFF_DEBUG: ::c_int = 0x4; // turn on debugging
@@ -1352,6 +1410,16 @@ pub const MSG_FBLOCKING: ::c_int = 0x00010000;
 pub const MSG_FNONBLOCKING: ::c_int = 0x00020000;
 pub const MSG_FMASK: ::c_int = 0xFFFF0000;
 
+// sys/mount.h
+pub const MNT_NODEV: ::c_int = 0x00000010;
+pub const MNT_AUTOMOUNTED: ::c_int = 0x00000020;
+pub const MNT_TRIM: ::c_int = 0x01000000;
+pub const MNT_LOCAL: ::c_int = 0x00001000;
+pub const MNT_QUOTA: ::c_int = 0x00002000;
+pub const MNT_ROOTFS: ::c_int = 0x00004000;
+pub const MNT_USER: ::c_int = 0x00008000;
+pub const MNT_IGNORE: ::c_int = 0x00800000;
+
 // utmpx entry types
 pub const EMPTY: ::c_short = 0;
 pub const RUN_LVL: ::c_short = 1;
@@ -1451,6 +1519,9 @@ pub const MAXCOMLEN: usize = 16;
 pub const MAXLOGNAME: usize = 33;
 pub const NGROUPS: usize = 16;
 
+pub const RB_PAUSE: ::c_int = 0x40000;
+pub const RB_VIDEO: ::c_int = 0x20000000;
+
 const_fn! {
     {const} fn _CMSG_ALIGN(n: usize) -> usize {
         (n + (::mem::size_of::<::c_long>() - 1)) & !(::mem::size_of::<::c_long>() - 1)
@@ -1463,7 +1534,7 @@ f! {
             .offset(_CMSG_ALIGN(::mem::size_of::<::cmsghdr>()) as isize)
     }
 
-    pub fn CMSG_LEN(length: ::c_uint) -> ::c_uint {
+    pub {const} fn CMSG_LEN(length: ::c_uint) -> ::c_uint {
         (_CMSG_ALIGN(::mem::size_of::<::cmsghdr>()) + length as usize)
             as ::c_uint
     }
@@ -1510,11 +1581,28 @@ f! {
         let (idx, offset) = ((cpu >> 6) & 3, cpu & 63);
         0 != cpuset.ary[idx] & (1 << offset)
     }
+
+    pub fn major(dev: ::dev_t) -> ::c_int {
+         ((dev >> 8) & 0xff) as ::c_int
+    }
+
+    pub fn minor(dev: ::dev_t) -> ::c_int {
+        (dev & 0xffff00ff) as ::c_int
+    }
 }
 
 safe_f! {
     pub {const} fn WIFSIGNALED(status: ::c_int) -> bool {
         (status & 0o177) != 0o177 && (status & 0o177) != 0
+    }
+
+    pub {const} fn makedev(major: ::c_uint, minor: ::c_uint) -> ::dev_t {
+        let major = major as ::dev_t;
+        let minor = minor as ::dev_t;
+        let mut dev = 0;
+        dev |= major << 8;
+        dev |= minor;
+        dev
     }
 }
 
@@ -1587,6 +1675,9 @@ extern "C" {
 
     pub fn umtx_sleep(ptr: *const ::c_int, value: ::c_int, timeout: ::c_int) -> ::c_int;
     pub fn umtx_wakeup(ptr: *const ::c_int, count: ::c_int) -> ::c_int;
+
+    pub fn dirname(path: *mut ::c_char) -> *mut ::c_char;
+    pub fn basename(path: *mut ::c_char) -> *mut ::c_char;
 }
 
 #[link(name = "rt")]
@@ -1611,6 +1702,20 @@ extern "C" {
 
     pub fn reallocf(ptr: *mut ::c_void, size: ::size_t) -> *mut ::c_void;
     pub fn freezero(ptr: *mut ::c_void, size: ::size_t);
+}
+
+#[link(name = "kvm")]
+extern "C" {
+    pub fn kvm_vm_map_entry_first(
+        kvm: *mut ::kvm_t,
+        map: vm_map_t,
+        entry: vm_map_entry_t,
+    ) -> vm_map_entry_t;
+    pub fn kvm_vm_map_entry_next(
+        kvm: *mut ::kvm_t,
+        map: vm_map_entry_t,
+        entry: vm_map_entry_t,
+    ) -> vm_map_entry_t;
 }
 
 cfg_if! {

@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.23.2] - 2022-12-03
+### Added
+
+### Changed
+
+### Fixed
+
+- `InetAddr::from_std` now sets the `sin_len`/`sin6_len` fields on the BSDs.
+  (#[1642](https://github.com/nix-rust/nix/pull/1642))
+- Fix microsecond calculation for `TimeSpec`.
+  ([#1801](https://github.com/nix-rust/nix/pull/1801))
+- Fix `User::from_name` and `Group::from_name` panicking
+  when given a name containing a nul.
+  ([#1815](https://github.com/nix-rust/nix/pull/1815))
+- Fix `User::from_uid` and `User::from_name` crash on Android platform.
+  ([#1824](https://github.com/nix-rust/nix/pull/1824))
+- Fix UB with `sys::socket::sockopt::SockType` using `SOCK_PACKET`.
+  ([#1821](https://github.com/nix-rust/nix/pull/1821))
+
+### Removed
+
 ## [0.23.1] - 2021-12-16
 
 ### Added

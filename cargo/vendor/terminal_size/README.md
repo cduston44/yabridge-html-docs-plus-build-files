@@ -22,14 +22,14 @@ if let Some((Width(w), Height(h))) = size {
 
 ## Minimum Rust Version
 
-This crate requires a minimum rust version of 1.31.0 (2018-12-06)
+This crate requires a minimum rust version of 1.48.0 (2020-11-19)
 
 ## License
 
 Licensed under either of
 
- * Apache License, Version 2.0, ([LICENSE-APACHE](LICENSE-APACHE) or http://www.apache.org/licenses/LICENSE-2.0)
- * MIT license ([LICENSE-MIT](LICENSE-MIT) or http://opensource.org/licenses/MIT)
+ * Apache License, Version 2.0, ([LICENSE-APACHE](LICENSE-APACHE) or https://www.apache.org/licenses/LICENSE-2.0)
+ * MIT license ([LICENSE-MIT](LICENSE-MIT) or https://opensource.org/licenses/MIT)
 
 at your option.
 

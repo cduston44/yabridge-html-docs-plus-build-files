@@ -1,26 +1,19 @@
 //! Filesystem API constants, translated into `bitflags` constants.
 
-use crate::imp;
+use crate::backend;
 
-pub use imp::fs::FdFlags;
+pub use crate::io::FdFlags;
+#[cfg(not(target_os = "espidf"))]
+pub use backend::fs::types::Access;
+pub use backend::fs::types::{Dev, Mode, OFlags};
 
-pub use imp::fs::Access;
+#[cfg(not(any(target_os = "espidf", target_os = "redox")))]
+pub use backend::fs::types::AtFlags;
 
-#[cfg(not(target_os = "redox"))]
-pub use imp::fs::AtFlags;
+#[cfg(apple)]
+pub use backend::fs::types::{CloneFlags, CopyfileFlags};
 
-pub use imp::fs::Mode;
+#[cfg(linux_kernel)]
+pub use backend::fs::types::*;
 
-pub use imp::fs::OFlags;
-
-#[cfg(any(target_os = "ios", target_os = "macos"))]
-pub use imp::fs::CloneFlags;
-
-#[cfg(any(target_os = "ios", target_os = "macos"))]
-pub use imp::fs::CopyfileFlags;
-
-#[cfg(any(target_os = "android", target_os = "linux"))]
-pub use imp::fs::ResolveFlags;
-
-#[cfg(any(target_os = "android", target_os = "linux"))]
-pub use imp::fs::RenameFlags;
+pub use crate::timespec::{Nsecs, Secs, Timespec};

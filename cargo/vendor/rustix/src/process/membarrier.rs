@@ -1,24 +1,20 @@
 //! The Linux `membarrier` syscall.
-//!
-//! # Safety
-//!
-//! This file defines an enum and a bitflags type that represent the same
-//! set of values and are kept in sync.
-#![allow(unsafe_code)]
 
 use crate::process::Cpuid;
-use crate::{imp, io};
+use crate::{backend, io};
 
-pub use imp::process::MembarrierCommand;
+pub use backend::process::types::MembarrierCommand;
 
-#[cfg(any(target_os = "android", target_os = "linux"))]
+#[cfg(linux_kernel)]
 bitflags::bitflags! {
     /// A result from [`membarrier_query`].
     ///
     /// These flags correspond to values of [`MembarrierCommand`] which are
     /// supported in the OS.
+    #[repr(transparent)]
+    #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
     pub struct MembarrierQuery: u32 {
-       /// `MEMBARRIER_CMD_GLOBAL`
+       /// `MEMBARRIER_CMD_GLOBAL` (also known as `MEMBARRIER_CMD_SHARED`)
        #[doc(alias = "SHARED")]
        #[doc(alias = "MEMBARRIER_CMD_SHARED")]
        const GLOBAL = MembarrierCommand::Global as _;
@@ -41,23 +37,23 @@ bitflags::bitflags! {
     }
 }
 
-#[cfg(any(target_os = "android", target_os = "linux"))]
+#[cfg(linux_kernel)]
 impl MembarrierQuery {
     /// Test whether this query result contains the given command.
     #[inline]
-    pub fn contains_command(&self, cmd: MembarrierCommand) -> bool {
-        // Safety: `MembarrierCommand` is an enum that only contains values
-        // also valid in `MembarrierQuery`.
-        self.contains(unsafe { Self::from_bits_unchecked(cmd as _) })
+    pub fn contains_command(self, cmd: MembarrierCommand) -> bool {
+        // `MembarrierCommand` is an enum that only contains values also valid
+        // in `MembarrierQuery`.
+        self.contains(Self::from_bits_retain(cmd as _))
     }
 }
 
 /// `membarrier(MEMBARRIER_CMD_QUERY, 0, 0)`—Query the supported `membarrier`
 /// commands.
 ///
-/// This function doesn't return a `Result` because it always succeeds; if
-/// the underlying OS doesn't support the `membarrier` syscall, it returns
-/// an empty `MembarrierQuery` value.
+/// This function doesn't return a `Result` because it always succeeds; if the
+/// underlying OS doesn't support the `membarrier` syscall, it returns an empty
+/// `MembarrierQuery` value.
 ///
 /// # References
 ///  - [Linux]
@@ -66,7 +62,7 @@ impl MembarrierQuery {
 #[inline]
 #[doc(alias = "MEMBARRIER_CMD_QUERY")]
 pub fn membarrier_query() -> MembarrierQuery {
-    imp::process::syscalls::membarrier_query()
+    backend::process::syscalls::membarrier_query()
 }
 
 /// `membarrier(cmd, 0, 0)`—Perform a memory barrier.
@@ -77,7 +73,7 @@ pub fn membarrier_query() -> MembarrierQuery {
 /// [Linux]: https://man7.org/linux/man-pages/man2/membarrier.2.html
 #[inline]
 pub fn membarrier(cmd: MembarrierCommand) -> io::Result<()> {
-    imp::process::syscalls::membarrier(cmd)
+    backend::process::syscalls::membarrier(cmd)
 }
 
 /// `membarrier(cmd, MEMBARRIER_CMD_FLAG_CPU, cpu)`—Perform a memory barrier
@@ -89,5 +85,5 @@ pub fn membarrier(cmd: MembarrierCommand) -> io::Result<()> {
 /// [Linux]: https://man7.org/linux/man-pages/man2/membarrier.2.html
 #[inline]
 pub fn membarrier_cpu(cmd: MembarrierCommand, cpu: Cpuid) -> io::Result<()> {
-    imp::process::syscalls::membarrier_cpu(cmd, cpu)
+    backend::process::syscalls::membarrier_cpu(cmd, cpu)
 }

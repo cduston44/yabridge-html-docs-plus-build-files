@@ -4,181 +4,128 @@ mod abs;
 #[cfg(not(target_os = "redox"))]
 mod at;
 mod constants;
-#[cfg(any(target_os = "android", target_os = "linux"))]
+#[cfg(linux_kernel)]
 mod copy_file_range;
-#[cfg(not(target_os = "redox"))]
+#[cfg(not(any(target_os = "espidf", target_os = "redox")))]
+#[cfg(not(target_os = "haiku"))] // Haiku needs <https://github.com/rust-lang/rust/pull/112371>
 mod cwd;
-#[cfg(not(target_os = "redox"))]
+#[cfg(not(any(target_os = "espidf", target_os = "redox")))]
 mod dir;
 #[cfg(not(any(
+    apple,
+    netbsdlike,
+    solarish,
     target_os = "dragonfly",
-    target_os = "illumos",
-    target_os = "ios",
-    target_os = "macos",
-    target_os = "netbsd",
-    target_os = "openbsd",
-    target_os = "redox"
+    target_os = "espidf",
+    target_os = "haiku",
+    target_os = "redox",
 )))]
 mod fadvise;
 pub(crate) mod fcntl;
-#[cfg(any(target_os = "ios", target_os = "macos"))]
-mod fcntl_darwin;
-#[cfg(any(target_os = "ios", target_os = "macos"))]
+#[cfg(apple)]
+mod fcntl_apple;
+#[cfg(apple)]
 mod fcopyfile;
 pub(crate) mod fd;
 mod file_type;
-#[cfg(any(target_os = "ios", target_os = "macos"))]
+#[cfg(apple)]
 mod getpath;
+#[cfg(not(target_os = "wasi"))] // WASI doesn't have get[gpu]id.
+mod id;
+#[cfg(not(target_os = "wasi"))]
+mod ioctl;
 #[cfg(not(any(
-    target_os = "dragonfly",
-    target_os = "freebsd",
-    target_os = "illumos",
-    target_os = "ios",
-    target_os = "macos",
-    target_os = "netbsd",
-    target_os = "openbsd",
+    target_os = "espidf",
+    target_os = "haiku",
     target_os = "redox",
     target_os = "wasi"
 )))]
 mod makedev;
-#[cfg(any(target_os = "android", target_os = "freebsd", target_os = "linux"))]
+#[cfg(any(linux_kernel, target_os = "freebsd"))]
 mod memfd_create;
-#[cfg(any(target_os = "android", target_os = "linux"))]
+#[cfg(linux_kernel)]
+#[cfg(feature = "fs")]
+mod mount;
+#[cfg(linux_kernel)]
 mod openat2;
+#[cfg(linux_kernel)]
+mod raw_dir;
+mod seek_from;
 #[cfg(target_os = "linux")]
 mod sendfile;
-#[cfg(any(target_os = "android", target_os = "linux"))]
+#[cfg(linux_kernel)]
 mod statx;
+#[cfg(not(any(target_os = "espidf", target_os = "redox", target_os = "wasi")))]
+mod sync;
+#[cfg(any(apple, linux_kernel))]
+mod xattr;
 
-#[cfg(not(any(
-    target_os = "illumos",
-    target_os = "netbsd",
-    target_os = "redox",
-    target_os = "wasi"
-)))]
-pub use abs::statfs;
-#[cfg(not(any(target_os = "illumos", target_os = "redox")))]
-pub use at::accessat;
-#[cfg(any(target_os = "ios", target_os = "macos"))]
-pub use at::fclonefileat;
-#[cfg(not(any(
-    target_os = "ios",
-    target_os = "macos",
-    target_os = "redox",
-    target_os = "wasi",
-)))]
-pub use at::mknodat;
-#[cfg(any(target_os = "android", target_os = "linux"))]
-pub use at::renameat_with;
-#[cfg(not(any(target_os = "redox", target_os = "wasi")))]
-pub use at::{chmodat, chownat};
+#[cfg(linux_kernel)]
+pub use crate::backend::fs::inotify;
+pub use abs::*;
 #[cfg(not(target_os = "redox"))]
-pub use at::{
-    linkat, mkdirat, openat, readlinkat, renameat, statat, symlinkat, unlinkat, utimensat, Dev,
-    RawMode, UTIME_NOW, UTIME_OMIT,
-};
-#[cfg(not(target_os = "redox"))]
-pub use constants::AtFlags;
-#[cfg(any(target_os = "ios", target_os = "macos"))]
-pub use constants::CloneFlags;
-/// `copyfile_flags_t`
-#[cfg(any(target_os = "ios", target_os = "macos"))]
-pub use constants::CopyfileFlags;
-#[cfg(any(target_os = "android", target_os = "linux"))]
-pub use constants::RenameFlags;
-#[cfg(any(target_os = "android", target_os = "linux"))]
-pub use constants::ResolveFlags;
-pub use constants::{Access, FdFlags, Mode, OFlags};
-#[cfg(any(target_os = "android", target_os = "linux"))]
+pub use at::*;
+pub use constants::*;
+#[cfg(linux_kernel)]
 pub use copy_file_range::copy_file_range;
-#[cfg(not(target_os = "redox"))]
-pub use cwd::cwd;
-#[cfg(not(target_os = "redox"))]
+#[cfg(not(any(target_os = "espidf", target_os = "redox")))]
+#[cfg(not(target_os = "haiku"))] // Haiku needs <https://github.com/rust-lang/rust/pull/112371>
+pub use cwd::*;
+#[cfg(not(any(target_os = "espidf", target_os = "redox")))]
 pub use dir::{Dir, DirEntry};
 #[cfg(not(any(
+    apple,
+    netbsdlike,
+    solarish,
     target_os = "dragonfly",
-    target_os = "illumos",
-    target_os = "ios",
-    target_os = "macos",
-    target_os = "netbsd",
-    target_os = "openbsd",
-    target_os = "redox"
+    target_os = "espidf",
+    target_os = "haiku",
+    target_os = "redox",
 )))]
 pub use fadvise::{fadvise, Advice};
-#[cfg(not(target_os = "wasi"))]
-pub use fcntl::fcntl_dupfd_cloexec;
-#[cfg(any(
-    target_os = "android",
-    target_os = "freebsd",
-    target_os = "fuchsia",
-    target_os = "linux",
-))]
-pub use fcntl::{fcntl_add_seals, fcntl_get_seals, SealFlags};
-pub use fcntl::{fcntl_getfd, fcntl_getfl, fcntl_setfd, fcntl_setfl};
-#[cfg(any(target_os = "ios", target_os = "macos"))]
-pub use fcntl_darwin::{fcntl_fullfsync, fcntl_rdadvise};
-#[cfg(any(target_os = "ios", target_os = "macos"))]
-pub use fcopyfile::{
-    copyfile_state_alloc, copyfile_state_free, copyfile_state_get, copyfile_state_get_copied,
-    copyfile_state_t, fcopyfile,
-};
-#[cfg(not(any(
-    target_os = "dragonfly",
-    target_os = "illumos",
-    target_os = "netbsd",
-    target_os = "openbsd",
-    target_os = "redox"
-)))]
-pub use fd::{fallocate, FallocateFlags};
-
-#[cfg(not(any(
-    target_os = "dragonfly",
-    target_os = "ios",
-    target_os = "macos",
-    target_os = "redox"
-)))]
-pub use fd::fdatasync;
-#[cfg(not(target_os = "wasi"))]
-pub use fd::{fchmod, fchown, flock, FlockOperation};
-pub use fd::{fstat, fsync, ftruncate, futimens, is_file_read_write, seek, tell, Stat, Timestamps};
-#[cfg(not(any(
-    target_os = "illumos",
-    target_os = "netbsd",
-    target_os = "redox",
-    target_os = "wasi"
-)))]
-// not implemented in libc for netbsd yet
-pub use fd::{fstatfs, StatFs};
-#[cfg(any(target_os = "android", target_os = "linux"))]
-pub use fd::{FsWord, NFS_SUPER_MAGIC, PROC_SUPER_MAGIC};
+pub use fcntl::*;
+#[cfg(apple)]
+pub use fcntl_apple::*;
+#[cfg(apple)]
+pub use fcopyfile::*;
+pub use fd::*;
 pub use file_type::FileType;
-#[cfg(any(target_os = "ios", target_os = "macos"))]
+#[cfg(apple)]
 pub use getpath::getpath;
+#[cfg(not(target_os = "wasi"))]
+pub use id::*;
+#[cfg(not(target_os = "wasi"))]
+pub use ioctl::*;
 #[cfg(not(any(
-    target_os = "dragonfly",
-    target_os = "freebsd",
-    target_os = "illumos",
-    target_os = "ios",
-    target_os = "macos",
-    target_os = "netbsd",
-    target_os = "openbsd",
+    target_os = "espidf",
+    target_os = "haiku",
     target_os = "redox",
     target_os = "wasi"
 )))]
-pub use makedev::{major, makedev, minor};
-#[cfg(any(target_os = "android", target_os = "freebsd", target_os = "linux"))]
+pub use makedev::*;
+#[cfg(any(linux_kernel, target_os = "freebsd"))]
 pub use memfd_create::{memfd_create, MemfdFlags};
-#[cfg(any(target_os = "android", target_os = "linux"))]
+#[cfg(linux_kernel)]
+#[cfg(feature = "fs")]
+pub use mount::*;
+#[cfg(linux_kernel)]
 pub use openat2::openat2;
+#[cfg(linux_kernel)]
+pub use raw_dir::{RawDir, RawDirEntry};
+pub use seek_from::SeekFrom;
 #[cfg(target_os = "linux")]
 pub use sendfile::sendfile;
-#[cfg(any(target_os = "android", target_os = "linux"))]
+#[cfg(linux_kernel)]
 pub use statx::{statx, Statx, StatxFlags, StatxTimestamp};
+#[cfg(not(any(target_os = "espidf", target_os = "redox", target_os = "wasi")))]
+pub use sync::sync;
+#[cfg(any(apple, linux_kernel))]
+pub use xattr::*;
 
 /// Re-export types common to POSIX-ish platforms.
 #[cfg(feature = "std")]
 #[cfg(unix)]
 pub use std::os::unix::fs::{DirEntryExt, FileExt, FileTypeExt, MetadataExt, OpenOptionsExt};
 #[cfg(feature = "std")]
-#[cfg(target_os = "wasi")]
+#[cfg(all(wasi_ext, target_os = "wasi"))]
 pub use std::os::wasi::fs::{DirEntryExt, FileExt, FileTypeExt, MetadataExt, OpenOptionsExt};

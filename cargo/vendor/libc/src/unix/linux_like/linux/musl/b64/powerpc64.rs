@@ -1,6 +1,7 @@
 pub type c_char = u8;
 pub type wchar_t = i32;
 pub type __u64 = ::c_ulong;
+pub type __s64 = ::c_long;
 pub type nlink_t = u64;
 pub type blksize_t = ::c_long;
 
@@ -171,6 +172,9 @@ pub const MAP_NONBLOCK: ::c_int = 0x010000;
 pub const MAP_STACK: ::c_int = 0x020000;
 pub const MAP_HUGETLB: ::c_int = 0x040000;
 pub const MAP_SYNC: ::c_int = 0x080000;
+
+pub const PTRACE_SYSEMU: ::c_int = 0x1d;
+pub const PTRACE_SYSEMU_SINGLESTEP: ::c_int = 0x1e;
 
 pub const SOCK_STREAM: ::c_int = 1;
 pub const SOCK_DGRAM: ::c_int = 2;
@@ -600,6 +604,14 @@ pub const SYS_faccessat2: ::c_long = 439;
 pub const SYS_process_madvise: ::c_long = 440;
 pub const SYS_epoll_pwait2: ::c_long = 441;
 pub const SYS_mount_setattr: ::c_long = 442;
+pub const SYS_quotactl_fd: ::c_long = 443;
+pub const SYS_landlock_create_ruleset: ::c_long = 444;
+pub const SYS_landlock_add_rule: ::c_long = 445;
+pub const SYS_landlock_restrict_self: ::c_long = 446;
+pub const SYS_memfd_secret: ::c_long = 447;
+pub const SYS_process_mrelease: ::c_long = 448;
+pub const SYS_futex_waitv: ::c_long = 449;
+pub const SYS_set_mempolicy_home_node: ::c_long = 450;
 
 pub const EDEADLK: ::c_int = 58;
 pub const EDEADLOCK: ::c_int = EDEADLK;

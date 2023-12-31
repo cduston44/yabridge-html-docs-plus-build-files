@@ -5,6 +5,10 @@ use libc::{timespec, timeval};
 #[cfg_attr(target_env = "musl", allow(deprecated))] // https://github.com/rust-lang/libc/issues/1848
 pub use libc::{time_t, suseconds_t};
 
+pub(crate) const TIMESPEC_ZERO: libc::timespec = unsafe {
+    std::mem::transmute([0u8; std::mem::size_of::<libc::timespec>()])
+};
+
 pub trait TimeValLike: Sized {
     #[inline]
     fn zero() -> Self {
@@ -119,11 +123,15 @@ impl PartialOrd for TimeSpec {
 
 impl TimeValLike for TimeSpec {
     #[inline]
+    #[cfg_attr(target_env = "musl", allow(deprecated))]
+    // https://github.com/rust-lang/libc/issues/1848
     fn seconds(seconds: i64) -> TimeSpec {
-        assert!(seconds >= TS_MIN_SECONDS && seconds <= TS_MAX_SECONDS,
+        assert!((TS_MIN_SECONDS..=TS_MAX_SECONDS).contains(&seconds),
                 "TimeSpec out of bounds; seconds={}", seconds);
-        #[cfg_attr(target_env = "musl", allow(deprecated))] // https://github.com/rust-lang/libc/issues/1848
-        TimeSpec(timespec {tv_sec: seconds as time_t, tv_nsec: 0 })
+        let mut ts = TIMESPEC_ZERO;
+        ts.tv_sec = seconds as time_t;
+        ts.tv_nsec = 0;
+        TimeSpec(ts)
     }
 
     #[inline]
@@ -145,15 +153,20 @@ impl TimeValLike for TimeSpec {
 
     /// Makes a new `TimeSpec` with given number of nanoseconds.
     #[inline]
+    #[cfg_attr(target_env = "musl", allow(deprecated))]
+    // https://github.com/rust-lang/libc/issues/1848
     fn nanoseconds(nanoseconds: i64) -> TimeSpec {
         let (secs, nanos) = div_mod_floor_64(nanoseconds, NANOS_PER_SEC);
-        assert!(secs >= TS_MIN_SECONDS && secs <= TS_MAX_SECONDS,
+        assert!((TS_MIN_SECONDS..=TS_MAX_SECONDS).contains(&secs),
                 "TimeSpec out of bounds");
-        #[cfg_attr(target_env = "musl", allow(deprecated))] // https://github.com/rust-lang/libc/issues/1848
-        TimeSpec(timespec {tv_sec: secs as time_t,
-                           tv_nsec: nanos as timespec_tv_nsec_t })
+        let mut ts = TIMESPEC_ZERO;
+        ts.tv_sec = secs as time_t;
+        ts.tv_nsec = nanos as timespec_tv_nsec_t;
+        TimeSpec(ts)
     }
 
+    // The cast is not unnecessary on all platforms.
+    #[allow(clippy::unnecessary_cast)]
     fn num_seconds(&self) -> i64 {
         if self.tv_sec() < 0 && self.tv_nsec() > 0 {
             (self.tv_sec() + 1) as i64
@@ -167,9 +180,11 @@ impl TimeValLike for TimeSpec {
     }
 
     fn num_microseconds(&self) -> i64 {
-        self.num_nanoseconds() / 1_000_000_000
+        self.num_nanoseconds() / 1_000
     }
 
+    // The cast is not unnecessary on all platforms.
+    #[allow(clippy::unnecessary_cast)]
     fn num_nanoseconds(&self) -> i64 {
         let secs = self.num_seconds() * 1_000_000_000;
         let nsec = self.nanos_mod_sec();
@@ -195,12 +210,13 @@ impl TimeSpec {
         self.0.tv_nsec
     }
 
+    #[cfg_attr(target_env = "musl", allow(deprecated))]
+    // https://github.com/rust-lang/libc/issues/1848
     pub const fn from_duration(duration: Duration) -> Self {
-        #[cfg_attr(target_env = "musl", allow(deprecated))] // https://github.com/rust-lang/libc/issues/1848
-        TimeSpec(timespec {
-            tv_sec: duration.as_secs() as time_t,
-            tv_nsec: duration.subsec_nanos() as timespec_tv_nsec_t
-        })
+        let mut ts = TIMESPEC_ZERO;
+        ts.tv_sec = duration.as_secs() as time_t;
+        ts.tv_nsec = duration.subsec_nanos() as timespec_tv_nsec_t;
+        TimeSpec(ts)
     }
 
     pub const fn from_timespec(timespec: timespec) -> Self {
@@ -333,7 +349,7 @@ impl PartialOrd for TimeVal {
 impl TimeValLike for TimeVal {
     #[inline]
     fn seconds(seconds: i64) -> TimeVal {
-        assert!(seconds >= TV_MIN_SECONDS && seconds <= TV_MAX_SECONDS,
+        assert!((TV_MIN_SECONDS..=TV_MAX_SECONDS).contains(&seconds),
                 "TimeVal out of bounds; seconds={}", seconds);
         #[cfg_attr(target_env = "musl", allow(deprecated))] // https://github.com/rust-lang/libc/issues/1848
         TimeVal(timeval {tv_sec: seconds as time_t, tv_usec: 0 })
@@ -351,7 +367,7 @@ impl TimeValLike for TimeVal {
     #[inline]
     fn microseconds(microseconds: i64) -> TimeVal {
         let (secs, micros) = div_mod_floor_64(microseconds, MICROS_PER_SEC);
-        assert!(secs >= TV_MIN_SECONDS && secs <= TV_MAX_SECONDS,
+        assert!((TV_MIN_SECONDS..=TV_MAX_SECONDS).contains(&secs),
                 "TimeVal out of bounds");
         #[cfg_attr(target_env = "musl", allow(deprecated))] // https://github.com/rust-lang/libc/issues/1848
         TimeVal(timeval {tv_sec: secs as time_t,
@@ -364,13 +380,15 @@ impl TimeValLike for TimeVal {
     fn nanoseconds(nanoseconds: i64) -> TimeVal {
         let microseconds = nanoseconds / 1000;
         let (secs, micros) = div_mod_floor_64(microseconds, MICROS_PER_SEC);
-        assert!(secs >= TV_MIN_SECONDS && secs <= TV_MAX_SECONDS,
+        assert!((TV_MIN_SECONDS..=TV_MAX_SECONDS).contains(&secs),
                 "TimeVal out of bounds");
         #[cfg_attr(target_env = "musl", allow(deprecated))] // https://github.com/rust-lang/libc/issues/1848
         TimeVal(timeval {tv_sec: secs as time_t,
                            tv_usec: micros as suseconds_t })
     }
 
+    // The cast is not unnecessary on all platforms.
+    #[allow(clippy::unnecessary_cast)]
     fn num_seconds(&self) -> i64 {
         if self.tv_sec() < 0 && self.tv_usec() > 0 {
             (self.tv_sec() + 1) as i64
@@ -383,6 +401,8 @@ impl TimeValLike for TimeVal {
         self.num_microseconds() / 1_000
     }
 
+    // The cast is not unnecessary on all platforms.
+    #[allow(clippy::unnecessary_cast)]
     fn num_microseconds(&self) -> i64 {
         let secs = self.num_seconds() * 1_000_000;
         let usec = self.micros_mod_sec();

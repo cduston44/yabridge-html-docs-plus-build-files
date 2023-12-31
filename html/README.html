@@ -13,8 +13,8 @@
 <div class="file" id="user-content-article-README">
 <div class="Box-body readme blob js-code-block-container p-5 p-xl-6" id="user-content-file-docker-image-pull-md-readme" style="margin-left: 40px; margin-right: 40px; margin-top: 20px; margin-bottom: 20px">
 <article class="markdown-body entry-content container-lg" itemprop="text">
-<h1 id="user-content-yabridge"><a aria-hidden="true" class="anchor" href="#user-content-yabridge" id="user-content-yabridge" name="user-content-yabridge"><span aria-hidden="true" class="octicon octicon-link"></span></a>yabridge</h1>
-<a href="https://discord.gg/pyNeweqadf" rel="nofollow"><img alt="" data-canonical-src="https://img.shields.io/discord/786993304197267527.svg?label=Discord&amp;logo=discord&amp;logoColor=ffffff&amp;color=7389D8&amp;labelColor=6A7EC2" src="https://img.shields.io/discord/786993304197267527.svg?label=Discord&amp;logo=discord&amp;logoColor=ffffff&amp;color=7389D8&amp;labelColor=6A7EC2" style="max-width: 100%;"/></a></p>
+<h1 id="user-content-yabridge"><a aria-hidden="true" class="anchor" href="#user-content-yabridge" id="user-content-yabridge" name="user-content-yabridge" tabindex="-1"><span aria-hidden="true" class="octicon octicon-link"></span></a>yabridge</h1>
+<p><a href="https://discord.gg/pyNeweqadf" rel="nofollow"><img alt="" data-canonical-src=https://img.shields.io/discord/786993304197267527.svg?label=Discord&amp;logo=discord&amp;logoColor=ffffff&amp;color=7389D8&amp;labelColor=6A7EC2" src="https://img.shields.io/discord/786993304197267527.svg?label=Discord&amp;logo=discord&amp;logoColor=ffffff&amp;color=7389D8&amp;labelColor=6A7EC2" style="max-width: 100%;"/></a></p>
 <p>Yet Another way to use Windows audio plugins on Linux. Yabridge seamlessly
 supports using both 32-bit and 64-bit Windows VST2, VST3, and CLAP plugins in
 64-bit Linux plugin hosts as if they were native plugins, with optional support
@@ -23,7 +23,7 @@ VST2 plugins and quick startup times. Its modern concurrent architecture and
 focus on transparency allows yabridge to be both fast and highly compatible,
 while also staying easy to debug and maintain.</p>
 <p><a href="./files/screenshot.png" rel="noopener noreferrer nofollow" target="_blank"><img alt="yabridge screenshot" data-canonical-src="./files/screenshot.png" src="./files/screenshot.png" style="max-width: 100%; max-height: 1440px;"/></a></p>
-<h3 id="user-content-table-of-contents"><a aria-hidden="true" class="anchor" href="#user-content-table-of-contents" id="user-content-table-of-contents" name="user-content-table-of-contents"><span aria-hidden="true" class="octicon octicon-link"></span></a>Table of contents</h3>
+<h3 id="user-content-table-of-contents"><a aria-hidden="true" class="anchor" href="#user-content-table-of-contents" id="user-content-table-of-contents" name="user-content-table-of-contents" tabindex="-1"><span aria-hidden="true" class="octicon octicon-link"></span></a>Table of contents</h3>
 <ul>
 <li><a href="#user-content-tested-with">Tested with</a></li>
 <li>
@@ -67,8 +67,8 @@ while also staying easy to debug and maintain.</p>
 </ul>
 </li>
 </ul>
-<h2 id="user-content-tested-with"><a aria-hidden="true" class="anchor" href="#user-content-tested-with" id="user-content-tested-with" name="user-content-tested-with"><span aria-hidden="true" class="octicon octicon-link"></span></a>Tested with</h2>
-<p>Yabridge has been tested under the following hosts using Wine Staging 8.7.</p>
+<h2 id="user-content-tested-with"><a aria-hidden="true" class="anchor" href="#user-content-tested-with" id="user-content-tested-with" name="user-content-tested-with" tabindex="-1"><span aria-hidden="true" class="octicon octicon-link"></span></a>Tested with</h2>
+<p>Yabridge has been tested under the following hosts using Wine Staging 9.0-rc1.</p>
 <table>
 <thead>
 <tr>
@@ -80,19 +80,19 @@ while also staying easy to debug and maintain.</p>
 </thead>
 <tbody>
 <tr>
-<td>Bitwig Studio 4.4.10/5.0 beta 6*</td>
+<td>Bitwig Studio 5.1</td>
 <td>✔️</td>
 <td>✔️</td>
 <td>✔️</td>
 </tr>
 <tr>
-<td>REAPER 6.73</td>
+<td>REAPER 7.07</td>
 <td>✔️</td>
 <td>✔️</td>
 <td>✔️</td>
 </tr>
 <tr>
-<td>Carla 2.5.3</td>
+<td>Carla 2.5.5</td>
 <td>✔️</td>
 <td>✔️</td>
 <td>Does not support CLAP</td>
@@ -104,7 +104,7 @@ while also staying easy to debug and maintain.</p>
 <td>⚠️ Qtractor may not support every CLAP plugin</td>
 </tr>
 <tr>
-<td>Renoise 3.4.2</td>
+<td>Renoise 3.4.3</td>
 <td>✔️</td>
 <td>⚠️ Renoise doesn't handle VST3 editor window sizing correctly</td>
 <td>Does not support CLAP</td>
@@ -116,9 +116,9 @@ while also staying easy to debug and maintain.</p>
 <td>Does not support CLAP</td>
 </tr>
 <tr>
-<td>Ardour 7.2</td>
+<td>Ardour 8.1</td>
 <td>✔️</td>
-<td>✔️</td>
+<td>⚠️ Some plugins may cause Ardour 7.3-8.1 to freeze</td>
 <td>Does not support CLAP</td>
 </tr>
 <tr>
@@ -133,7 +133,7 @@ while also staying easy to debug and maintain.</p>
 <sup>
   *Bitwig Studio's Flatpak version will not work with yabridge. You'll need to use the .deb found on the release notes page instead.
 </sup>
-<h2 id="user-content-usage"><a aria-hidden="true" class="anchor" href="#user-content-usage" id="user-content-usage" name="user-content-usage"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h2>
+<h2 id="user-content-usage"><a aria-hidden="true" class="anchor" href="#user-content-usage" id="user-content-usage" name="user-content-usage" tabindex="-1"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h2>
 <ol start="0">
 <li>
 <p>First of all, yabridge requires a recent-ish version of Wine (Staging). Users
@@ -162,7 +162,7 @@ packages.</p>
 </li>
 <li>
 <p>On <strong>Fedora</strong>, you can install yabridge and yabridgectl from a
-<a href="https://copr.fedorainfracloud.org/coprs/patrickl/yabridge-stable/" rel="nofollow">COPR</a>.</p>
+<a href="https://copr.fedorainfracloud.org/coprs/patrickl/yabridge/" rel="nofollow">COPR</a>.</p>
 </li>
 <li>
 <p>On the <strong>OpenSUSE</strong> distros, yabridge and yabridgectl are packaged by
@@ -177,10 +177,9 @@ distro, you can simply download and install a prebuilt version of yabridge:</p>
 <ol>
 <li>
 <p>First download the latest version of yabridge from the <a href="https://github.com/robbert-vdh/yabridge/releases">releases
-page</a>. If you're using
-a distro that's older than Ubuntu 20.04 such as Ubuntu 18.04, Debian 10,
-Linux Mint 19, or AV Linux MXE 2021, then you should download the
-version that ends with <code>-ubuntu-18.04.tar.gz</code>.</p>
+page</a>. These binaries
+currently target Ubuntu 20.04, and should work on any other distro
+that's newer than that.</p>
 </li>
 <li>
 <p>Extract the contents of the downloaded archive to <code>~/.local/share</code>, such
@@ -248,19 +247,19 @@ will be set up in <code>~/.vst/yabridge</code>, <code>~/.vst3/yabridge</code>, a
 good to go.</p>
 </li>
 </ol>
-<h3 id="user-content-bitbridge"><a aria-hidden="true" class="anchor" href="#user-content-bitbridge" id="user-content-bitbridge" name="user-content-bitbridge"><span aria-hidden="true" class="octicon octicon-link"></span></a>Bitbridge</h3>
+<h3 id="user-content-bitbridge"><a aria-hidden="true" class="anchor" href="#user-content-bitbridge" id="user-content-bitbridge" name="user-content-bitbridge" tabindex="-1"><span aria-hidden="true" class="octicon octicon-link"></span></a>Bitbridge</h3>
 <p>Yabridge can also load 32-bit Windows plugins so you can use them in your 64-bit
 Linux DAW. Yabridge will automatically detect whether a plugin is 32-bit or
 64-bit on startup and it will handle it accordingly. If you've installed
 yabridge through a distro package, then it may be possible that your distro has
 disabled this feature.</p>
-<h3 id="user-content-wine-prefixes"><a aria-hidden="true" class="anchor" href="#user-content-wine-prefixes" id="user-content-wine-prefixes" name="user-content-wine-prefixes"><span aria-hidden="true" class="octicon octicon-link"></span></a>Wine prefixes</h3>
+<h3 id="user-content-wine-prefixes"><a aria-hidden="true" class="anchor" href="#user-content-wine-prefixes" id="user-content-wine-prefixes" name="user-content-wine-prefixes" tabindex="-1"><span aria-hidden="true" class="octicon octicon-link"></span></a>Wine prefixes</h3>
 <p>It is also possible to use yabridge with multiple Wine prefixes at the same
 time. Yabridge will automatically detect and use the Wine prefix the Windows
 plugin's <code>.dll</code>, <code>.vst3</code>, or <code>.clap</code> file is located in. Alternatively, you can
 set the <code>WINEPREFIX</code> environment variable to override the Wine prefix for <em>all
 yabridge plugins</em>.</p>
-<h3 id="user-content-drag-and-drop"><a aria-hidden="true" class="anchor" href="#user-content-drag-and-drop" id="user-content-drag-and-drop" name="user-content-drag-and-drop"><span aria-hidden="true" class="octicon octicon-link"></span></a>Drag-and-drop</h3>
+<h3 id="user-content-drag-and-drop"><a aria-hidden="true" class="anchor" href="#user-content-drag-and-drop" id="user-content-drag-and-drop" name="user-content-drag-and-drop" tabindex="-1"><span aria-hidden="true" class="octicon octicon-link"></span></a>Drag-and-drop</h3>
 <p>Yabridge supports drag-and-drop both from a native (X11) Linux application to
 plugins running under yabridge, as well as from yabridge plugins to native X11
 applications like your DAW or your file browser. When dragging things from a
@@ -270,7 +269,7 @@ That's expected, since yabridge's and Wine's own drag-and-drop systems are
 active at the same time. If you're using yabridge in <em>REAPER</em> or <em>Carla</em>, then
 you may need to enable a <a href="#user-content-compatibility-options">compatibility option</a> to
 prevent those hosts from stealing the drop.</p>
-<h3 id="user-content-input-focus-grabbing"><a aria-hidden="true" class="anchor" href="#user-content-input-focus-grabbing" id="user-content-input-focus-grabbing" name="user-content-input-focus-grabbing"><span aria-hidden="true" class="octicon octicon-link"></span></a>Input focus grabbing</h3>
+<h3 id="user-content-input-focus-grabbing"><a aria-hidden="true" class="anchor" href="#user-content-input-focus-grabbing" id="user-content-input-focus-grabbing" name="user-content-input-focus-grabbing" tabindex="-1"><span aria-hidden="true" class="octicon octicon-link"></span></a>Input focus grabbing</h3>
 <p>Yabridge tries to be clever about the way grabbing and releasing input focus for
 a plugin works. One important detail here is that when grabbing input focus,
 yabridge will always focus the <em>parent window</em> passed by the host for the plugin
@@ -285,7 +284,7 @@ directly so that all keyboard input goes to Wine, you can hold down the
 let you type spaces in text fields in <strong>Bitwig Studio</strong>, type text into the
 settings and license dialogs in <strong>Voxengo</strong> plugins, and it will also allow you
 to navigate dropdowns with the keyboard.</p>
-<h3 id="user-content-downgrading-wine"><a aria-hidden="true" class="anchor" href="#user-content-downgrading-wine" id="user-content-downgrading-wine" name="user-content-downgrading-wine"><span aria-hidden="true" class="octicon octicon-link"></span></a>Downgrading Wine</h3>
+<h3 id="user-content-downgrading-wine"><a aria-hidden="true" class="anchor" href="#user-content-downgrading-wine" id="user-content-downgrading-wine" name="user-content-downgrading-wine" tabindex="-1"><span aria-hidden="true" class="octicon octicon-link"></span></a>Downgrading Wine</h3>
 <p>If you run into software or a plugin that does not work correctly with the
 current version of Wine Staging, then you may want to try downgrading to an
 earlier version of Wine. This can be done as follows:</p>
@@ -321,7 +320,7 @@ to <code>IgnorePkg</code>. If you select <code>yes</code>, the package will be a
 automatically.</p>
 </li>
 </ul>
-<h3 id="user-content-installing-a-development-build"><a aria-hidden="true" class="anchor" href="#user-content-installing-a-development-build" id="user-content-installing-a-development-build" name="user-content-installing-a-development-build"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installing a development build</h3>
+<h3 id="user-content-installing-a-development-build"><a aria-hidden="true" class="anchor" href="#user-content-installing-a-development-build" id="user-content-installing-a-development-build" name="user-content-installing-a-development-build" tabindex="-1"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installing a development build</h3>
 <p>If you want to try to a development version of yabridge, then you can do so as
 follows:</p>
 <ul>
@@ -347,7 +346,7 @@ package first in order to avoid conflicts.</li>
 </ul>
 <p>After updating yabridge's files, you will need to rerun <code>yabridgectl sync</code> to
 finish the upgrade.</p>
-<h2 id="user-content-configuration"><a aria-hidden="true" class="anchor" href="#user-content-configuration" id="user-content-configuration" name="user-content-configuration"><span aria-hidden="true" class="octicon octicon-link"></span></a>Configuration</h2>
+<h2 id="user-content-configuration"><a aria-hidden="true" class="anchor" href="#user-content-configuration" id="user-content-configuration" name="user-content-configuration" tabindex="-1"><span aria-hidden="true" class="octicon octicon-link"></span></a>Configuration</h2>
 <p>Yabridge can be configured on a per plugin basis to host multiple plugins within
 a single process using <a href="#user-content-plugin-groups">plugin groups</a>, and there are also a
 number of <a href="#user-content-compatibility-options">compatibility options</a> available to improve
@@ -370,7 +369,7 @@ matching glob pattern within that file will be considered. See below for an
 <a href="#user-content-example">example</a> of a <code>yabridge.toml</code> file. To make debugging easier,
 yabridge will print the used <code>yabridge.toml</code> file and the matched section within
 it on startup, as well as all of the options that have been set.</p>
-<h3 id="user-content-plugin-groups"><a aria-hidden="true" class="anchor" href="#user-content-plugin-groups" id="user-content-plugin-groups" name="user-content-plugin-groups"><span aria-hidden="true" class="octicon octicon-link"></span></a>Plugin groups</h3>
+<h3 id="user-content-plugin-groups"><a aria-hidden="true" class="anchor" href="#user-content-plugin-groups" id="user-content-plugin-groups" name="user-content-plugin-groups" tabindex="-1"><span aria-hidden="true" class="octicon octicon-link"></span></a>Plugin groups</h3>
 <table>
 <thead>
 <tr>
@@ -406,7 +405,7 @@ VST3 or CLAP plugin will always be hosted in a single process regardless of
 whether you have enabled plugin groups or not.</em> <em>The only reason to use plugin
 groups with those plugins is to get slightly lower loading times the first time
 you load a new plugin.</em></p>
-<h3 id="user-content-compatibility-options"><a aria-hidden="true" class="anchor" href="#user-content-compatibility-options" id="user-content-compatibility-options" name="user-content-compatibility-options"><span aria-hidden="true" class="octicon octicon-link"></span></a>Compatibility options</h3>
+<h3 id="user-content-compatibility-options"><a aria-hidden="true" class="anchor" href="#user-content-compatibility-options" id="user-content-compatibility-options" name="user-content-compatibility-options" tabindex="-1"><span aria-hidden="true" class="octicon octicon-link"></span></a>Compatibility options</h3>
 <table>
 <thead>
 <tr>
@@ -461,7 +460,7 @@ you load a new plugin.</em></p>
 <p>These options are workarounds for issues mentioned in the <a href="#user-content-known-issues-and-fixes">known
 issues</a> section. Depending on the hosts
 and plugins you use you might want to enable some of them.</p>
-<h3 id="user-content-example"><a aria-hidden="true" class="anchor" href="#user-content-example" id="user-content-example" name="user-content-example"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example</h3>
+<h3 id="user-content-example"><a aria-hidden="true" class="anchor" href="#user-content-example" id="user-content-example" name="user-content-example" tabindex="-1"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example</h3>
 <p>All of the paths used here are relative to the <code>yabridge.toml</code> file. A
 configuration file for VST2 plugins might look a little something like this:</p>
 <div class="highlight highlight-source-toml"><pre><span class="pl-c"><span class="pl-c">#</span> ~/.vst/yabridge/yabridge.toml</span>
@@ -474,7 +473,7 @@ configuration file for VST2 plugins might look a little something like this:</p>
 
 <span class="pl-c"><span class="pl-c">#</span> Matches an entire directory and all files inside it, make sure to not include</span>
 <span class="pl-c"><span class="pl-c">#</span> a trailing slash</span>
-[<span class="pl-en">"ToneBoosters"</span>]
+[<span class="pl-ii">"ToneBoosters"]</span>
 <span class="pl-smi">group</span> = <span class="pl-s"><span class="pl-pds">"</span>toneboosters<span class="pl-pds">"</span></span>
 
 [<span class="pl-en">"PSPaudioware"</span>]
@@ -494,16 +493,16 @@ configuration file for VST2 plugins might look a little something like this:</p>
 <span class="pl-smi">disable_pipes</span> = <span class="pl-c1">true</span>
 
 <span class="pl-c"><span class="pl-c">#</span> Simple glob patterns can be used to avoid unneeded repetition</span>
-[<span class="pl-en">"iZotope*/Neutron</span> <span class="pl-en">*"</span>]
+[<span class="pl-ii">"iZotope*/Neutron *"]</span>
 <span class="pl-smi">group</span> = <span class="pl-s"><span class="pl-pds">"</span>izotope<span class="pl-pds">"</span></span>
 
 <span class="pl-c"><span class="pl-c">#</span> Since this file has already been matched by the above glob pattern, this won't</span>
 <span class="pl-c"><span class="pl-c">#</span> do anything</span>
-[<span class="pl-en">"iZotope7/Neutron</span> <span class="pl-en">2</span> <span class="pl-en">Mix</span> <span class="pl-en">Tap</span>.<span class="pl-en">so"</span>]
+[<span class="pl-ii">"iZotope7/Neutron 2 Mix Tap.so"]</span>
 <span class="pl-smi">group</span> = <span class="pl-s"><span class="pl-pds">"</span>This will be ignored!<span class="pl-pds">"</span></span>
 
 <span class="pl-c"><span class="pl-c">#</span> Of course, you can also add multiple plugins to the same group by hand</span>
-[<span class="pl-en">"iZotope7/Insight</span> <span class="pl-en">2</span>.<span class="pl-en">so"</span>]
+[<span class="pl-ii">"iZotope7/Insight 2.so"]</span>
 <span class="pl-smi">group</span> = <span class="pl-s"><span class="pl-pds">"</span>izotope<span class="pl-pds">"</span></span>
 
 <span class="pl-c"><span class="pl-c">#</span> This would cause all plugins to be hosted within a single process. Doing so</span>
@@ -531,7 +530,7 @@ deep within in, like this:</p>
 
 <span class="pl-c"><span class="pl-c">#</span> These options would be applied to all plugins that do not already have their</span>
 <span class="pl-c"><span class="pl-c">#</span> own configuration set</span>
-[<span class="pl-en">"*"</span>]
+[<span class="pl-ii">"*"]</span>
 <span class="pl-smi">editor_force_dnd</span> = <span class="pl-c1">true</span>
 <span class="pl-smi">editor_disable_host_scaling</span> = <span class="pl-c1">true</span></pre></div>
 <p>With CLAP plugins, you match on the Linux <code>.clap</code> plugin file, just like
@@ -540,7 +539,7 @@ matching on <code>.so</code> files for a VST2 config file:</p>
 
 [<span class="pl-en">"fb799964</span>.<span class="pl-en">clap"</span>]
 <span class="pl-smi">hide_daw</span> = <span class="pl-c1">true</span></pre></div>
-<h2 id="user-content-known-issues-and-fixes"><a aria-hidden="true" class="anchor" href="#user-content-known-issues-and-fixes" id="user-content-known-issues-and-fixes" name="user-content-known-issues-and-fixes"><span aria-hidden="true" class="octicon octicon-link"></span></a>Known issues and fixes</h2>
+<h2 id="user-content-known-issues-and-fixes"><a aria-hidden="true" class="anchor" href="#user-content-known-issues-and-fixes" id="user-content-known-issues-and-fixes" name="user-content-known-issues-and-fixes" tabindex="-1"><span aria-hidden="true" class="octicon octicon-link"></span></a>Known issues and fixes</h2>
 <p>Any plugin should function out of the box, although some plugins will need some
 additional dependencies for their GUIs to work correctly. Notable examples
 include:</p>
@@ -553,7 +552,8 @@ include:</p>
 <p>If a plugin seems to work fine except for the fact that the GUI never seems to
 update when you interact with it, then try installing
 <a href="https://github.com/doitsujin/dxvk">DXVK</a>. Many recent JUCE-based plugins
-don't redraw anymore when using WineD3D.</p>
+don't redraw anymore when using WineD3D. Make sure you also install Vulkan
+drivers if you don't already have those set up.</p>
 </li>
 <li>
 <p><strong>Serum</strong> requires you to disable <code>d2d1.dll</code> in <code>winecfg</code> and to install
@@ -563,8 +563,10 @@ clicking on the save icon next to 'Preferences'.</p>
 </li>
 <li>
 <p><strong>Native Instruments</strong> plugins work, but the latest version of Native Access
-doesn't run under Wine. You can find Native Access 1 on the <a href="https://support.native-instruments.com/hc/en-us/articles/360000407909-Native-Access-1-Legacy-Installers-for-Older-Operating-Systems" rel="nofollow">legacy
-installers</a>
+needs some extra work to run under wine. See the <a href="https://appdb.winehq.org/objectManager.php?sClass=version&amp;iId=41820" rel="nofollow">wineHQ page</a>
+for information on how to get it running.</p>
+<p>The legacy version <code>1.X</code> still can be installed directly. You can find it on the
+<a href="https://support.native-instruments.com/hc/en-us/articles/360000407909-Native-Access-1-Legacy-Installers-for-Older-Operating-Systems" rel="nofollow">legacy installers</a>
 page on Native Instruments' website. To get the installer to finish correctly,
 open <code>winecfg</code> and set the reported Windows version to Windows 10. Otherwise
 the installer will be stuck on installing an ISO driver. To work around this
@@ -713,7 +715,7 @@ XEmbed implementation also introduces other rendering issues.</li>
 </ul>
 <p>There are also some (third party) plugin API extensions for that have not been
 implemented yet. See the <a href="./ROADMAP.md">roadmap</a> for a list of future plans.</p>
-<h2 id="user-content-troubleshooting-common-issues"><a aria-hidden="true" class="anchor" href="#user-content-troubleshooting-common-issues" id="user-content-troubleshooting-common-issues" name="user-content-troubleshooting-common-issues"><span aria-hidden="true" class="octicon octicon-link"></span></a>Troubleshooting common issues</h2>
+<h2 id="user-content-troubleshooting-common-issues"><a aria-hidden="true" class="anchor" href="#user-content-troubleshooting-common-issues" id="user-content-troubleshooting-common-issues" name="user-content-troubleshooting-common-issues" tabindex="-1"><span aria-hidden="true" class="octicon octicon-link"></span></a>Troubleshooting common issues</h2>
 <p>If your problem is not listed here, then feel free to post on the <a href="https://github.com/robbert-vdh/yabridge/issues">issue
 tracker</a> or to ask about it in
 the yabridge <a href="https://discord.gg/pyNeweqadf" rel="nofollow">Discord</a>. Also check the <a href="#user-content-known-issues-and-fixes">known
@@ -746,6 +748,27 @@ of your plugins to use that specific Wine prefix, then you should unset it to
 allow yabridge to automatically detect Wine prefixes for you.</p>
 </li>
 <li>
+<p>If you get a warning about a low <code>RLIMIT_RTTIME</code> value of 200000 microseconds,
+then your DAW is running in an environment where <em>rtkit</em> is active. Rtkit is
+used to grant realtime scheduling privileges to applications in environments
+where users can't do that themselves, but it also imposes severe limitations
+on what those applications can do. Applications known for doing this are:</p>
+<ul>
+<li>
+<strong>PipeWire</strong>. With PipeWire versions above 0.3.44, you simply need to make
+sure your user has realtime priviliges. Follow the instructions from the
+section below to enable this and then reboot your system.</li>
+<li>
+<strong>GNOME 45+</strong>. Recent GNOME shell versions started using rtkit in the shell
+itself. As far as I'm aware, this happens unconditionally, and masking the
+rtkit service to prevent it from running is the only workaround. Make sure
+your user has realtime priviliges set up according to the instructions from
+the section below, and then run <code>sudo systemctl mask rtkit-daemon.service</code>.
+The warning should disappear after rebooting. Please let me know if anyone
+knows a better solution for this problem!</li>
+</ul>
+</li>
+<li>
 <p>If yabridge prints errors or warnings about memory locking limits, then that
 means that you have not yet set up realtime privileges for your user. Setting
 the memlock limit to unlimited (or -1) is usually part of this process. How
@@ -759,17 +782,6 @@ sets this up for the <code>audio</code> group instead. If
 <code>/etc/security/limits.d/audio.conf</code> exists, then you can simply add yourself
 to the <code>audio</code> group and reboot. In any other case you may need to <a href="https://jackaudio.org/faq/linux_rt_config.html" rel="nofollow">set this
 up yourself</a>.</p>
-</li>
-<li>
-<p>The above process also applies to warnings about low <code>RLIMIT_RTTIME</code> values
-when using PipeWire's JACK implementation. If you don't change this, then
-certain slow loading plugins may crash during initialization or at any other
-time. <strong>Starting with PipeWire 0.3.44, you only need to make sure your user
-has realtime privileges to resolve this warning.</strong> If your user does not have
-these permissions, then PipeWire will use RTKit instead of regular realtime
-scheduling which requires this limit to be set for it to work. You may also
-want to give <a href="https://github.com/robbert-vdh/dotfiles#pipewire">this</a>
-optimized PipeWire configuration a try.</p>
 </li>
 <li>
 <p>If you're seeing errors related to Wine either when running <code>yabridgectl sync</code>
@@ -815,6 +827,28 @@ able to open the terminal at all), then you might want to consider using
 frequently used plugins within a single process. And if you're using many
 instances of a single VST2 plugin, using the VST3 or CLAP version of that
 plugin may also help since they'll share a single process.</p>
+<p>Alternatively you can try increasing Xorg's limit itself.
+First, check what your current limit is:
+In a terminal, run: <code>less /var/log/Xorg.0.1</code> (or use any other text editor)
+Search for a line containing "MaxClients". This then states the currently set
+limit.
+Then check if higher values are supported:
+In a terminal, run: <code>/usr/lib/Xorg -maxclients 9999</code>
+This should give an error message and show some information like this:</p>
+<blockquote>
+<p>maxclients must be one of 64, 128, 256, 512, 1024 or 2048</p>
+</blockquote>
+<p>Let's say we pick 1024. Here's how to apply it.
+Create this file (will require sudo): <code>/etc/X11/xorg.conf.d/99-maxclients.conf</code>
+Add this content:</p>
+<pre><code>Section "ServerFlags"
+    Option "MaxClients" "1024"
+EndSection
+</code></pre>
+<p>Save and reboot your system. Once you are logged back in, you can verify that
+the setting has been applied by using the same approach for checking the
+previously set limit (see above). Now it should be less likely to run into the
+previous issue regarding "too many clients" when opening lots of plugins.</p>
 </li>
 <li>
 <p>If you're using a <code>WINELOADER</code> that runs the Wine process under a separate
@@ -825,7 +859,7 @@ case, you may also want to use <code>YABRIDGE_TEMP_DIR</code> to choose a differ
 directory for yabridge to store its sockets and other temporary files in.</p>
 </li>
 </ul>
-<h2 id="user-content-performance-tuning"><a aria-hidden="true" class="anchor" href="#user-content-performance-tuning" id="user-content-performance-tuning" name="user-content-performance-tuning"><span aria-hidden="true" class="octicon octicon-link"></span></a>Performance tuning</h2>
+<h2 id="user-content-performance-tuning"><a aria-hidden="true" class="anchor" href="#user-content-performance-tuning" id="user-content-performance-tuning" name="user-content-performance-tuning" tabindex="-1"><span aria-hidden="true" class="octicon octicon-link"></span></a>Performance tuning</h2>
 <p>Running Windows plugins under Wine should have a minimal performance overhead,
 but you may still notice an increase in latency spikes and overall DSP load.
 Luckily there are a few things you can do to get rid of most or all of these
@@ -890,7 +924,7 @@ plugin. Hosting all instances of the same plugin in a single process can in
 those cases greatly reduce overall CPU usage and get rid of latency spikes.</p>
 </li>
 </ul>
-<h3 id="user-content-environment-configuration"><a aria-hidden="true" class="anchor" href="#user-content-environment-configuration" id="user-content-environment-configuration" name="user-content-environment-configuration"><span aria-hidden="true" class="octicon octicon-link"></span></a>Environment configuration</h3>
+<h3 id="user-content-environment-configuration"><a aria-hidden="true" class="anchor" href="#user-content-environment-configuration" id="user-content-environment-configuration" name="user-content-environment-configuration" tabindex="-1"><span aria-hidden="true" class="octicon octicon-link"></span></a>Environment configuration</h3>
 <p>This section is relevant if you want to configure environment variables in such
 a way that they will be set when you launch your DAW from the GUI instead of
 from a terminal. You may want to enable <code>WINEFSYNC</code> for fsync support with a
@@ -932,12 +966,11 @@ the environment after this file has been read):</p>
 </ul>
 <p><em>Make sure to log out and log back in again to ensure that all applications pick
 up the new changes.</em></p>
-<h2 id="user-content-building"><a aria-hidden="true" class="anchor" href="#user-content-building" id="user-content-building" name="user-content-building"><span aria-hidden="true" class="octicon octicon-link"></span></a>Building</h2>
+<h2 id="user-content-building"><a aria-hidden="true" class="anchor" href="#user-content-building" id="user-content-building" name="user-content-building" tabindex="-1"><span aria-hidden="true" class="octicon octicon-link"></span></a>Building</h2>
 <p>To compile yabridge, you'll need <a href="https://mesonbuild.com/index.html" rel="nofollow">Meson</a> and
 the following dependencies:</p>
 <ul>
-<li>GCC 10+<a href="#user-content-building-ubuntu-18.04">*</a>
-</li>
+<li>GCC 10+</li>
 <li>A Wine installation with <code>winegcc</code> and the development headers. The latest
 commits contain a workaround for a winelib <a href="https://bugs.winehq.org/show_bug.cgi?id=49138" rel="nofollow">compilation
 issue</a> with Wine 5.7+.</li>
@@ -953,7 +986,7 @@ issue</a> with Wine 5.7+.</li>
 <li>Version 3.7.7 of the <a href="https://github.com/robbert-vdh/vst3sdk">VST3 SDK</a> with
 some <a href="https://github.com/robbert-vdh/yabridge/blob/master/tools/patch-vst3-sdk.sh">patches</a>
 to allow Winelib compilation</li>
-<li>Version 1.1.7 of the <a href="https://github.com/free-audio/clap">CLAP headers</a>.</li>
+<li>Version 1.1.9 of the <a href="https://github.com/free-audio/clap">CLAP headers</a>.</li>
 </ul>
 <p>The project can then be compiled with the command below. You can remove or
 change the unity size argument if building takes up too much RAM, or you can
@@ -963,15 +996,7 @@ slightly longer build times.</p>
 ninja -C build</pre></div>
 <p>After you've finished building you can follow the instructions under the
 <a href="#user-content-usage">usage</a> section on how to set up yabridge.</p>
-<sup id="user-content-building-ubuntu-18.04">
-  *The version of GCC that ships with Ubuntu 18.04 by default is too old to
-  compile yabridge. If you do wish to build yabridge from scratch rather than
-  using the <a href="https://github.com/robbert-vdh/yabridge/actions?query=workflow%3A%22Automated+builds%22+branch%3Amaster">prebuilt
-  binaries</a>, then you should take a look at the <a href="https://github.com/robbert-vdh/docker-yabridge/blob/master/bionic/Dockerfile">docker
-  image</a> used when building yabridge on Ubuntu 18.04 for on overview of what
-  would need to be installed to compile on Ubuntu 18.04.
-</sup>
-<h3 id="user-content-32-bit-bitbridge"><a aria-hidden="true" class="anchor" href="#user-content-32-bit-bitbridge" id="user-content-32-bit-bitbridge" name="user-content-32-bit-bitbridge"><span aria-hidden="true" class="octicon octicon-link"></span></a>32-bit bitbridge</h3>
+<h3 id="user-content-32-bit-bitbridge"><a aria-hidden="true" class="anchor" href="#user-content-32-bit-bitbridge" id="user-content-32-bit-bitbridge" name="user-content-32-bit-bitbridge" tabindex="-1"><span aria-hidden="true" class="octicon octicon-link"></span></a>32-bit bitbridge</h3>
 <p>It is also possible to compile a host application for yabridge that's compatible
 with 32-bit plugins such as old SynthEdit plugins. This will allow yabridge to
 act as a bitbridge, allowing you to run old 32-bit only Windows plugins in a
@@ -987,7 +1012,7 @@ ninja -C build</pre></div>
 Yabridge will detect whether the plugin you're trying to load is 32-bit or
 64-bit, and will run either the regular version or the <code>*-32.exe</code> variant
 accordingly.</p>
-<h3 id="user-content-32-bit-libraries"><a aria-hidden="true" class="anchor" href="#user-content-32-bit-libraries" id="user-content-32-bit-libraries" name="user-content-32-bit-libraries"><span aria-hidden="true" class="octicon octicon-link"></span></a>32-bit libraries</h3>
+<h3 id="user-content-32-bit-libraries"><a aria-hidden="true" class="anchor" href="#user-content-32-bit-libraries" id="user-content-32-bit-libraries" name="user-content-32-bit-libraries" tabindex="-1"><span aria-hidden="true" class="octicon octicon-link"></span></a>32-bit libraries</h3>
 <p>It also possible to build 32-bit versions of yabridge's libraries, which would
 let you use both 32-bit and 64-bit Windows VST2, VST3, and CLAP plugins from a
 32-bit Linux plugin host. This is mostly untested since 32-bit only Linux
@@ -1001,7 +1026,7 @@ ninja -C build</pre></div>
 amount of system memory available. See the CI build definitions for some
 examples on how to add static linking in the mix if you're going to run this
 version of yabridge on some other machine.</p>
-<h2 id="user-content-debugging"><a aria-hidden="true" class="anchor" href="#user-content-debugging" id="user-content-debugging" name="user-content-debugging"><span aria-hidden="true" class="octicon octicon-link"></span></a>Debugging</h2>
+<h2 id="user-content-debugging"><a aria-hidden="true" class="anchor" href="#user-content-debugging" id="user-content-debugging" name="user-content-debugging" tabindex="-1"><span aria-hidden="true" class="octicon octicon-link"></span></a>Debugging</h2>
 <p>Wine's error messages and warning are usually very helpful whenever a plugin
 doesn't work right away. However, with some hosts it can be hard read a plugin's
 output. To make it easier to debug malfunctioning plugins, yabridge offers these
@@ -1043,7 +1068,7 @@ for an example of how to use this.</p>
 be very helpful when diagnosing problems. In particular the <code>+message</code>,
 <code>+module</code> and <code>+relay</code> channels are very useful to trace the execution path
 within the loaded plugin itself.</p>
-<h3 id="user-content-attaching-a-debugger"><a aria-hidden="true" class="anchor" href="#user-content-attaching-a-debugger" id="user-content-attaching-a-debugger" name="user-content-attaching-a-debugger"><span aria-hidden="true" class="octicon octicon-link"></span></a>Attaching a debugger</h3>
+<h3 id="user-content-attaching-a-debugger"><a aria-hidden="true" class="anchor" href="#user-content-attaching-a-debugger" id="user-content-attaching-a-debugger" name="user-content-attaching-a-debugger" tabindex="-1"><span aria-hidden="true" class="octicon octicon-link"></span></a>Attaching a debugger</h3>
 <p>To debug the plugin, you can just attach gdb to the host. Debugging the Wine
 plugin host is a bit trickier. Wine comes with a GDB proxy for winedbg, but it
 requires a little bit of additional setup and it expects the command line
