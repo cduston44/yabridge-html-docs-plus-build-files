@@ -102,10 +102,12 @@ fi
 
 # Start the update process
 cd "$(dirname "$0")" || exit 1; CWD=$(pwd)
-
+mkdir "$CWD/updater/tmp/"
 cd "$CWD/updater/tmp/" || exit 1
+
 downloadSource "$TAR_NAME" "$DIR_NAME" "$DOWNLOAD_URL"
 cd "$DIR_NAME" || exit 1
+
 updateHtml
 updateVendor
 
@@ -113,3 +115,14 @@ updateVendor
 cd .. || exit 1
 updateVst3sdk
 
+# pack the files
+cd "$CWD" || exit 1
+mkdir yabridge-docs-plus-build
+mv cargo html vst3sdk yabridge-docs-plus-build/
+# to get consistency we don't set time and owner
+# this way we always get the same md5sum
+# if its the same files in the tar
+tar czf "yabridge-docs-plus-build-$TAR_NAME" \
+        --mtime="1970-01-01" --no-same-owner \
+        yabridge-docs-plus-build/
+rm -fr "$CWD/yabridge-docs-plus-build" "$CWD/updater/tmp/"

@@ -27,8 +27,6 @@
 # Capture the exit status of the diff command
 # Check the exit status
 diffFile() {
-    echo "diff $1 $2"
-
     if [[ ! -f $2 ]]; then
         return 0
     fi
@@ -39,6 +37,8 @@ diffFile() {
     if [ $status -eq 0 ]; then
         return 0  # Files are identical
     elif [ $status -eq 1 ]; then
+        echo ""
+        echo "diff $1 $2"
         return 1  # Files differ
     else
         echo "An error occurred with diff" >&2
@@ -67,8 +67,6 @@ moveNewFile () {
 # Capture the exit status
 # If the directories differ, show the detailed differences with diff -r
 diffDir() {
-    echo "diff $1 $2"
-
     if [[ ! -f $2 ]]; then
         return 0
     fi
@@ -80,6 +78,7 @@ diffDir() {
         return 0  # Directories are identical
     elif [ $status -eq 1 ]; then
         echo ""
+        echo "diff $1 $2"
         diff -r "$1" "$2"
         return 1  # Directories differ
     else
