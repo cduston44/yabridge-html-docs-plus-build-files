@@ -1,0 +1,53 @@
+yabridge SlackBuild Build and Doc Files Updater and Generator
+
+This script is designed for users on SlackBuild.org. It facilitates building
+yabridge from source, updating documentation files, and generating necessary
+files for the yabridge SlackBuild package.
+
+Purpose
+
+The primary purpose of this script is to:
+
+    Build the yabridge SlackBuild package.
+    Update documentation files.
+    Generate additional files required for packaging or distribution.
+
+This script automates the process of fetching specific versions of yabridge
+based on tags or commit hashes, ensuring you are always working with the latest
+or a specified version.
+
+Requirements
+
+    Python 3.x and gh-md-to-html
+    pip package manager for Python dependencies
+    git
+    A Slackware-compatible environment with SlackBuild tools
+
+Known Issue
+
+If you encounter the following error while running the script:
+
+AttributeError: module 'emoji' has no attribute 'EMOJI_ALIAS_UNICODE_ENGLISH'
+
+This issue is related to an outdated version of the emoji library.
+To fix it, install version 1.7.0 by running the following command:
+
+pip install emoji==1.7.0
+
+Usage
+
+The script can be used with the following options:
+
+Usage: ./update.sh [--tag TAG | --hash COMMIT_HASH]
+
+  --tag TAG           Fetch the specified tag (default if no option is provided)
+  --hash COMMIT_HASH  Fetch the repository at a specific commit hash
+  -h, --help          Show help
+
+
+To fetch a specific tag:
+
+./update.sh --tag 5.1.1
+
+For any issues, questions, or feature requests, please report to me here.
+Keep updating yabridge on Slackware!

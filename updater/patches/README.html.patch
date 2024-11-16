@@ -1,0 +1,30 @@
+diff -ruN a/README.html b/README.html
+--- a/README.html
++++ b/README.html
+@@ -14,8 +14,7 @@
+ <div class="Box-body readme blob js-code-block-container p-5 p-xl-6" id="user-content-file-docker-image-pull-md-readme" style="margin-left: 40px; margin-right: 40px; margin-top: 20px; margin-bottom: 20px">
+ <article class="markdown-body entry-content container-lg" itemprop="text">
+ <div class="markdown-heading"><h1 class="heading-element">yabridge</h1><a aria-label="Permalink: yabridge" class="anchor" href="#user-content-yabridge" id="user-content-yabridge" name="user-content-yabridge"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+-<p><a href="https://github.com/robbert-vdh/yabridge/actions?query=workflow%3A%22Automated+builds%22+branch%3Amaster"><img alt="Automated builds" data-canonical-src="/images/badge.svg" src="/images/badge.svg" style="max-width: 100%;"/></a>
+-<a href="https://discord.gg/pyNeweqadf" rel="nofollow"><img alt="Discord" data-canonical-src="/images/786993304197267527.svg" src="/images/786993304197267527.svg" style="max-width: 100%;"/></a></p>
++<p><a href="https://discord.gg/pyNeweqadf" rel="nofollow"><img alt="" data-canonical-src="https://img.shields.io/discord/786993304197267527.svg?label=Discord&amp;logo=discord&amp;logoColor=ffffff&amp;color=7389D8&amp;labelColor=6A7EC2" src="https://img.shields.io/discord/786993304197267527.svg?label=Discord&amp;logo=discord&amp;logoColor=ffffff&amp;color=7389D8&amp;labelColor=6A7EC2" style="max-width: 100%;"/></a></p>
+ <p>Yet Another way to use Windows audio plugins on Linux. Yabridge seamlessly
+ supports using both 32-bit and 64-bit Windows VST2, VST3, and CLAP plugins in
+ 64-bit Linux plugin hosts as if they were native plugins, with optional support
+@@ -23,7 +22,7 @@
+ VST2 plugins and quick startup times. Its modern concurrent architecture and
+ focus on transparency allows yabridge to be both fast and highly compatible,
+ while also staying easy to debug and maintain.</p>
+-<p><a href="/images/screenshot.png" rel="noopener noreferrer nofollow" target="_blank"><img alt="yabridge screenshot" data-canonical-src="/images/screenshot.png" src="/images/screenshot.png" style="max-width: 100%; max-height: 1440px;"/></a></p>
++<p><a href="./files/screenshot.png" rel="noopener noreferrer nofollow" target="_blank"><img alt="yabridge screenshot" data-canonical-src="./files/screenshot.png" src="./files/screenshot.png" style="max-width: 100%; max-height: 1440px;"/></a></p>
+ <div class="markdown-heading"><h3 class="heading-element">Table of contents</h3><a aria-label="Permalink: Table of contents" class="anchor" href="#user-content-table-of-contents" id="user-content-table-of-contents" name="user-content-table-of-contents"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+ <ul>
+ <li><a href="#user-content-tested-with">Tested with</a></li>
+@@ -154,7 +153,6 @@
+ a binary archive from the GitHub releases page. Keep in mind that the distro
+ packages mentioned below may not always be up to date, and some may also not
+ be compiled with support for 32-bit plugins.</p>
+-<p><a href="https://repology.org/project/yabridge/versions" rel="nofollow" title="Packaging status"><img align="right" data-canonical-src="/images/yabridge.svg" src="/images/yabridge.svg" style="max-width: 100%;"/></a></p>
+ <ul>
+ <li>
+ <p>On <strong>Arch</strong> and <strong>Manjaro</strong>, yabridge and yabridgectl can be installed from
