@@ -30,7 +30,7 @@
 # Vendor dependencies in tools/yabridgectl
 updateVendor () {
     cd tools/yabridgectl || exit 1
-    cargo vendor > config.toml
+    cargo vendor > config.toml || exit 1
     # This sed will remove the git reference so it will stay an offline build
     # for Slackware 15 it will find reflink in the vendor directory
     # if its just "https://github.com/nicokoch/reflink"

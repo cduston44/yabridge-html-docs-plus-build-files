@@ -63,6 +63,17 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
+if [ -f /opt/rust/bin/cargo ]; then
+    export PATH="/opt/rust/bin:$PATH"
+    if [ -z "$LD_LIBRARY_PATH" ]; then
+        export LD_LIBRARY_PATH="/opt/rust/lib$LIBDIRSUFFIX"
+    else
+        export LD_LIBRARY_PATH="/opt/rust/lib$LIBDIRSUFFIX:$LD_LIBRARY_PATH"
+    fi
+else
+    echo "Install rust-opt" >&2
+fi
+
 # Default to using the tag if neither tag nor hash is provided
 if [[ -z "$TAG" && -z "$HASH" ]]; then
     echo "No tag or hash provided. Using the tag argument." >&2
